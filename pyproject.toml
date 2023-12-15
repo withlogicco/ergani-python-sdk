@@ -8,9 +8,19 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
+requests = "^2.31.0"
 
 [tool.poetry.dev-dependencies]
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.12.0"
+isort = "^5.13.2"
+mypy = "^1.7.1"
+types-requests = "^2.31.0.10"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black"
