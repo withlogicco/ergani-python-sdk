@@ -57,7 +57,7 @@ class ErganiClient:
         employee_tax_identification_number: str,
         employee_last_name: str,
         employee_first_name: str,
-        work_card_movement_type: str,
+        work_card_movement_type: int,
         work_card_submission_date: str,
         work_card_movement_datetime: str,
         comments: Optional[str] = "",
@@ -122,7 +122,7 @@ class ErganiClient:
         business_secondary_activity_code_4: Optional[str] = "",
         comments: Optional[str] = "",
         asee_approval: Optional[str] = "",
-    ) -> Tuple[Dict[str, Any], Optional[Response]]:
+    ) -> Optional[Response]:
         endpoint = "/Documents/OvTime"
 
         request_payload = {
@@ -185,7 +185,7 @@ class ErganiClient:
         comments: Optional[str] = "",
         schedule_start_date: Optional[str] = "",
         schedule_end_date: Optional[str] = "",
-    ) -> Tuple[Dict[str, Any], Optional[Response]]:
+    ) -> Optional[Response]:
         endpoint = "/Documents/WTODaily"
 
         request_payload = {
