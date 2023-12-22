@@ -29,7 +29,6 @@ class ErganiClient:
             url,
             json=payload,
             auth=ErganiAuthentication(self.username, self.password, self.base_url),
-            headers={"Content-Type": "application/json"},
         )
 
         return self._handle_response(response, payload)
@@ -63,7 +62,7 @@ class ErganiClient:
         work_card_movement_datetime: str,
         comments: Optional[str] = "",
         late_declaration_justification_code: Optional[str] = "",
-    ) -> Tuple[Dict[str, Any], Optional[Response]]:
+    ) -> Optional[Response]:
         endpoint = "/Documents/WRKCardSE"
 
         request_payload = {
@@ -93,7 +92,7 @@ class ErganiClient:
 
         response = self._request("POST", endpoint, request_payload)
 
-        return request_payload, response
+        return response
 
     def submit_overtime(
         self,
@@ -169,7 +168,7 @@ class ErganiClient:
 
         response = self._request("POST", endpoint, request_payload)
 
-        return request_payload, response
+        return response
 
     def submit_daily_schedule(
         self,
@@ -225,4 +224,4 @@ class ErganiClient:
 
         response = self._request("POST", endpoint, request_payload)
 
-        return request_payload, response
+        return response

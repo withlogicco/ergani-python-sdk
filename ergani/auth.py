@@ -37,13 +37,9 @@ class ErganiAuthentication(AuthBase):
             "UserType": "01",
         }
 
-        auth_headers = {"Content-Type": "application/json"}
-
         try:
-            response = requests.post(
-                f"{self.base_url}{endpoint}", json=payload, headers=auth_headers
-            )
-            print(response.json())
+            response = requests.post(f"{self.base_url}{endpoint}", json=payload)
+
             if response.status_code != 200:
                 error_message = extract_error_message(response)
                 raise AuthenticationError(message=error_message, response=response)
