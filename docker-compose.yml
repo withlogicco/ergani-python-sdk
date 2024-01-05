@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  ergani-python-sdk:
+    build: .
+    environment:
+      ERGANI_USERNAME: ${ERGANI_USERNAME}
+      ERGANI_PASSWORD: ${ERGANI_PASSWORD}
+      ERGANI_BASE_URL: ${ERGANI_BASE_URL}
+    volumes:
+      - .:/usr/src/app
+    network_mode: host
+    image: ergani-python-sdk:latest
+    command: sleep infinity
