@@ -21,7 +21,7 @@ class Error(Exception):
     def __str__(self) -> str:
         if not self.message:
             if self.response.status_code >= 500:
-                self.mesasge = "Service unavailable, please try again later"
+                self.message = "Service unavailable, please try again later"
             if self.response.status_code == 400:
                 self.message = "Please check your inputs and try again"
 
