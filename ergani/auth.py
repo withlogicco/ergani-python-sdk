@@ -2,7 +2,6 @@ from typing import Optional
 
 import requests
 from requests.auth import AuthBase
-from requests.exceptions import RequestException
 from requests.models import PreparedRequest
 
 from ergani.exceptions import AuthenticationError
@@ -29,7 +28,7 @@ class ErganiAuthentication(AuthBase):
         request.headers["Authorization"] = f"Bearer {self.access_token}"
         return request
 
-    def _authenticate(self) -> Optional[str]:
+    def _authenticate(self) -> str:
         endpoint = "/Authentication"
         payload = {
             "Username": self.username,
@@ -37,14 +36,11 @@ class ErganiAuthentication(AuthBase):
             "UserType": "01",
         }
 
-        try:
-            response = requests.post(f"{self.base_url}{endpoint}", json=payload)
+        response = requests.post(f"{self.base_url}{endpoint}", json=payload)
 
-            if response.status_code != 200:
-                error_message = extract_error_message(response)
-                raise AuthenticationError(message=error_message, response=response)
+        if response.status_code != 200:
+            error_message = extract_error_message(response)
+            raise AuthenticationError(message=error_message, response=response)
 
-            token = response.json().get("accessToken")
-            return token
-        except RequestException:
-            raise AuthenticationError()
+        token = response.json()["accessToken"]
+        return token

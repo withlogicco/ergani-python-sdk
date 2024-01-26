@@ -19,13 +19,16 @@ class Error(Exception):
         self.payload = payload
 
     def __str__(self) -> str:
-        if not self.message:
-            if self.response.status_code >= 500:
-                self.message = "Service unavailable, please try again later"
-            if self.response.status_code == 400:
-                self.message = "Please check your inputs and try again"
+        if self.response:
+            if not self.message:
+                if self.response.status_code >= 500:
+                    self.message = "Service unavailable, please try again later"
+                if self.response.status_code == 400:
+                    self.message = "Please check your inputs and try again"
 
-        return f"Status code {self.response.status_code}. Error message: {self.message}"
+            return f"Status code {self.response.status_code}. Error message: {self.message}"
+
+        return f"Error message: {self.message}"
 
 
 class AuthenticationError(Error):
