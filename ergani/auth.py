@@ -10,7 +10,7 @@ from ergani.utils import extract_error_message
 
 class ErganiAuthentication(AuthBase):
     """
-    Authentication handler for the Ergani API.
+    Authentication handler for the Ergani API
     """
 
     def __init__(

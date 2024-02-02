@@ -15,6 +15,15 @@ from ergani.utils import extract_error_message
 
 
 class ErganiClient:
+    """
+    A client for interacting with the Ergani API
+
+    Args:
+        username str: The username for authentication with Ergani
+        password str: The password for authentication with Ergani
+        base_url str: The base URL of the Ergani API. Defaults to "https://trialeservices.yeka.gr/WebServicesAPI/api".
+    """
+
     def __init__(
         self,
         username: str,
@@ -61,7 +70,17 @@ class ErganiClient:
         self, company_work_cards: List[CompanyWorkCard]
     ) -> Optional[Response]:
         """
-        Submits work cards records (check-in, check-out) for employees to the Ergani API
+        Submits work card records (check-in, check-out) for employees to the Ergani API
+
+        Args:
+            company_work_cards List[CompanyWorkCard]: A list of CompanyWorkCard instances to be submitted
+
+        Returns:
+            An optional Response object from the Ergani API
+
+        Raises:
+            APIError: An error occurred while communicating with the Ergani API
+            AuthenticationError: Raised if there is an authentication error with the Ergani API
         """
 
         endpoint = "/Documents/WRKCardSE"
@@ -83,6 +102,16 @@ class ErganiClient:
     ) -> Optional[Response]:
         """
         Submits overtime records for employees to the Ergani API
+
+        Args:
+            company_overtimes List[CompanyOvertime]: A list of CompanyOvertime instances to be submitted
+
+        Returns:
+            An optional Response object from the Ergani API
+
+        Raises:
+            APIError: An error occurred while communicating with the Ergani API
+            AuthenticationError: Raised if there is an authentication error with the Ergani API
         """
 
         endpoint = "/Documents/OvTime"
@@ -105,6 +134,16 @@ class ErganiClient:
     ) -> Optional[Response]:
         """
         Submits schedule records that are updated on a daily basis for employees to the Ergani API
+
+        Args:
+            company_daily_schedules List[CompanyDailySchedule]: A list of CompanyDailySchedule instances to be submitted
+
+        Returns:
+            An optional Response object from the Ergani API
+
+        Raises:
+            APIError: An error occurred while communicating with the Ergani API
+            AuthenticationError: Raised if there is an authentication error with the Ergani API
         """
 
         endpoint = "/Documents/WTODaily"
@@ -124,6 +163,16 @@ class ErganiClient:
     ) -> Optional[Response]:
         """
         Submits weekly schedule records for employees to the Ergani API
+
+        Args:
+            company_weekly_schedules List[CompanyWeeklySchedule]: A list of CompanyWeeklySchedule instances to be submitted
+
+        Returns:
+            An optional Response object from the Ergani API
+
+        Raises:
+            APIError: An error occurred while communicating with the Ergani API
+            AuthenticationError: Raised if there is an authentication error with the Ergani API
         """
 
         endpoint = "/Documents/WTOWeek"

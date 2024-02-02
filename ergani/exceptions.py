@@ -5,7 +5,7 @@ from requests.models import Response
 
 class Error(Exception):
     """
-    Base class for all API errors.
+    Base class for all API errors
     """
 
     def __init__(
@@ -33,7 +33,7 @@ class Error(Exception):
 
 class AuthenticationError(Error):
     """
-    Raised when an API request fails due to an authentication error.
+    Raised when an API request fails due to an authentication error
     """
 
     pass
@@ -41,7 +41,7 @@ class AuthenticationError(Error):
 
 class APIError(Error):
     """
-    Raised when an API request fails due to an unknown error.
+    Raised when an API request fails due to an unknown error
     """
 
     pass

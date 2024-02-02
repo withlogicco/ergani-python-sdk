@@ -23,6 +23,19 @@ from ergani.utils import (
 
 @dataclass
 class WorkCard:
+    """
+    Represents a work card entry for an employee
+
+    Attributes:
+        employee_tax_identification_number (str): The employee's tax identification number
+        employee_last_name (str): The last name of the employee
+        employee_first_name (str): The first name of the employee
+        work_card_movement_type (WorkCardMovementType): The type of work card movement
+        work_card_submission_date (date): The date the work card was submitted
+        work_card_movement_datetime (datetime): The exact date and time of the work card movement
+        late_declaration_justification (Optional[LateDeclarationJustificationType]): The justification for the late declaration of the work card movement
+    """
+
     employee_tax_identification_number: str
     employee_last_name: str
     employee_first_name: str
@@ -47,6 +60,16 @@ class WorkCard:
 
 @dataclass
 class CompanyWorkCard:
+    """
+    Represents work card entries that are issued on a single business branch
+
+    Attributes:
+        employer_tax_identification_number (str): The employer's tax identification number
+        business_branch_number (int): The number identifying the specific business branch
+        comments (Optional[str]): Additional comments related to the work cards
+        card_details (List[WorkCard]): A list of `WorkCard` entries for the business branch
+    """
+
     employer_tax_identification_number: str
     business_branch_number: int
     comments: Optional[str] = ""
@@ -67,6 +90,24 @@ class CompanyWorkCard:
 
 @dataclass
 class Overtime:
+    """
+    Represents an overtime entry for an employee
+
+    Attributes:
+        employee_tax_identification_number (str): The employee's tax identification number
+        employee_social_security_number (str): The employee's social security number
+        employee_last_name (str): The last name of the employee
+        employee_first_name (str): The first name of the employee
+        overtime_date (date): The date of the overtime
+        overtime_start_time (time): The start time of the overtime period
+        overtime_end_time (time): The end time of the overtime period
+        overtime_cancellation (bool): Indicates if the overtime was cancelled or not
+        employee_profession_code (str): The profession code of the employee
+        overtime_justification (OvertimeJustificationType): The justification for the overtime
+        weekly_workdays_number (Literal[5, 6]): The number of the employee's working days in a week
+        asee_approval (Optional[str]): The ASEE aproval
+    """
+
     employee_tax_identification_number: str
     employee_social_security_number: str
     employee_last_name: str
@@ -101,6 +142,27 @@ class Overtime:
 
 @dataclass
 class CompanyOvertime:
+    """
+    Represents overtime entries that are issued on a single business branch
+
+    Attributes:
+        business_branch_number (int): The number identifying the specific business branch
+        sepe_service_code (str): The SEPE service code
+        business_primary_activity_code (str): The primary activity code of the business
+        business_branch_activity_code (str): The activity code for the specific branch
+        kallikratis_municipal_code (str): The kallikratis municipal code
+        legal_representative_tax_identification_number (str): Tax identification number of the legal representative
+        employee_overtimes (List[Overtime]): A list of `Overtime` entries for employees
+        related_protocol_id (Optional[str]): Related protocol ID
+        related_protocol_date (Optional[date]): The date of the related protocol
+        employer_organization (Optional[str]): The employer's organization name
+        business_secondary_activity_code_1 (Optional[str]): Secondary activity code 1
+        business_secondary_activity_code_2 (Optional[str]): Secondary activity code 2
+        business_secondary_activity_code_3 (Optional[str]): Secondary activity code 3
+        business_secondary_activity_code_4 (Optional[str]): Secondary activity code 4
+        comments (Optional[str]): Additional comments related to the overtime entries
+    """
+
     business_branch_number: int
     sepe_service_code: str
     business_primary_activity_code: str
@@ -143,6 +205,15 @@ class CompanyOvertime:
 
 @dataclass
 class WorkdayDetails:
+    """
+    Represents details of an employee's workday
+
+    Attributes:
+        work_type (ScheduleWorkType): The type of an employee's work schedule
+        start_time (time): The start time of the workday
+        end_time (time): The end time of the workday
+    """
+
     work_type: ScheduleWorkType
     start_time: time
     end_time: time
@@ -157,6 +228,17 @@ class WorkdayDetails:
 
 @dataclass
 class EmployeeDailySchedule:
+    """
+    Represents a daily schedule entry for an employee
+
+    Attributes:
+        employee_tax_identification_number (str): The employee's tax identification number
+        employee_last_name (str): The employee's last name
+        employee_first_name (str): The employee's first name
+        schedule_date (date): The date of the schedule
+        workday_details (List[WorkdayDetails]): A list of workday detail entries for the employee
+    """
+
     employee_tax_identification_number: str
     employee_last_name: str
     employee_first_name: str
@@ -180,6 +262,19 @@ class EmployeeDailySchedule:
 
 @dataclass
 class CompanyDailySchedule:
+    """
+    Represents daily schedule entries that are issued on a single business branch
+
+    Attributes:
+        business_branch_number (int): The number identifying the business branch
+        start_date (Optional[date]): The start date of the schedule
+        end_date (Optional[date]): The end date of the schedule period
+        employee_schedules (List[EmployeeDailySchedule]): A list of daily schedules for employees
+        related_protocol_id (Optional[str]): The ID of the related protocol
+        related_protocol_date (Optional[date]): The date of the related protocol
+        comments (Optional[str]): Additional comments regarding the daily schedule entries
+    """
+
     business_branch_number: int
     start_date: Optional[date] = None
     end_date: Optional[date] = None
@@ -207,6 +302,17 @@ class CompanyDailySchedule:
 
 @dataclass
 class EmployeeWeeklySchedule:
+    """
+    Represents a weekly schedule entry for an employee
+
+    Attributes:
+        employee_tax_identification_number (str): The employee's tax identification number
+        employee_last_name (str): The employee's last name
+        employee_first_name (str): The employee's first name
+        schedule_date (date): The date of the schedule
+        workday_details (List[WorkdayDetails]): A list of workday detail entries for the week
+    """
+
     employee_tax_identification_number: str
     employee_last_name: str
     employee_first_name: str
@@ -230,6 +336,19 @@ class EmployeeWeeklySchedule:
 
 @dataclass
 class CompanyWeeklySchedule:
+    """
+    Represents weekly schedule entries that are issued on a single business branch
+
+    Attributes:
+        business_branch_number (int): The number identifying the business branch
+        start_date (date): The start date of the weekly schedule
+        end_date (date): The end date of the weekly schedule
+        employee_schedules (List[EmployeeWeeklySchedule]): A list of weekly schedules for employees
+        related_protocol_id (Optional[str]): The ID of the related protocol
+        related_protocol_date (Optional[date]): The date of the related protocol
+        comments (Optional[str]): Additional comments regarding the weekly schedule entries
+    """
+
     business_branch_number: int
     start_date: date
     end_date: date
