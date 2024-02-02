@@ -4,3 +4,4 @@ __pycache__/
 *.py[cod]
 *.env
 .DS_Store
+docs/build/

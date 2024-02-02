@@ -14,7 +14,13 @@ from ergani.typings import (
 
 def extract_error_message(response: Response) -> str:
     """
-    Extracts the error message from a requests Response object.
+    Extracts the error message from a requests Response object
+
+    Args:
+        response: A Response object
+
+    Returns:
+        The extracted error message
     """
     content_type: str = response.headers.get("Content-Type", "")
 
@@ -42,7 +48,14 @@ def extract_error_message(response: Response) -> str:
 def format_time(t: time) -> str:
     """
     Formats a datetime.time instance to `HH:MM`
+
+    Args:
+        t: The time that is going to be formatted
+
+    Returns:
+        The formatted time
     """
+
     if not t:
         return ""
 
@@ -52,7 +65,14 @@ def format_time(t: time) -> str:
 def format_date(d: Optional[date]) -> str:
     """
     Formats a datetime.date instance to `dd/nm/YYYY"`
+
+    Args:
+        d: The date that is going to be formatted
+
+    Returns:
+        The formatted date
     """
+
     if not d:
         return ""
 
@@ -62,7 +82,14 @@ def format_date(d: Optional[date]) -> str:
 def format_datetime(d: Optional[datetime]) -> str:
     """
     Formats a datetime.datetime instance to an ISO 8601 format
+
+    Args:
+        d: The datetime that is going to be formatted
+
+    Returns:
+        The formatted datetime
     """
+
     if not d:
         return ""
 
@@ -74,7 +101,14 @@ def get_day_of_week(d: Optional[date]) -> Union[int, str]:
     Returns the day of the week from a datetime.date instance
 
     0 - Sunday, 6 - Saturday
+
+    Args:
+        d: The date that is going to be evaluated
+
+    Returns:
+        The day of the week
     """
+
     if not d:
         return ""
 
@@ -83,6 +117,16 @@ def get_day_of_week(d: Optional[date]) -> Union[int, str]:
 
 
 def get_ergani_workcard_movement_type(movement_type: WorkCardMovementType) -> str:
+    """
+    Returns the ergani value for workcard_movement_type
+
+    Args:
+        workcard_movement_type: The movement type of a work card
+
+    Returns:
+        The Ergani value that is going to be used with the Ergani API
+    """
+
     movement_type_mapping = {
         "ARRIVAL": "0",
         "DEPARTURE": "1",
@@ -94,6 +138,16 @@ def get_ergani_workcard_movement_type(movement_type: WorkCardMovementType) -> st
 def get_ergani_late_declaration_justification(
     justification: LateDeclarationJustificationType,
 ) -> str:
+    """
+    Returns the ergani value for late_declaration_justification
+
+    Args:
+        late_declaration_justification: The justification for a late work card submission
+
+    Returns:
+        The Ergani value that is going to be used with the Ergani API
+    """
+
     justification_mapping = {
         "POWER_OUTAGE": "001",
         "EMPLOYER_SYSTEMS_UNAVAILABLE": "002",
@@ -104,10 +158,30 @@ def get_ergani_late_declaration_justification(
 
 
 def get_ergani_overtime_cancellation(cancellation: bool) -> str:
+    """
+    Returns the ergani value for overtime_cancellation
+
+    Args:
+        overtime_cancellation: A value representing if an overtime is going to to be cancelled or not
+
+    Returns:
+        The Ergani value that is going to be used with the Ergani API
+    """
+
     return "0" if not cancellation else "1"
 
 
 def get_ergani_overtime_justification(justification: OvertimeJustificationType) -> str:
+    """
+    Returns the ergani value for overtime_justification
+
+    Args:
+        overtime_justification: The justification of an employee's overtime
+
+    Returns:
+        The Ergani value that is going to be used with the Ergani API
+    """
+
     justification_mapping = {
         "ACCIDENT_PREVENTION_OR_DAMAGE_RESTORATION": "001",
         "URGENT_SEASONAL_TASKS": "002",
@@ -124,6 +198,16 @@ def get_ergani_overtime_justification(justification: OvertimeJustificationType) 
 
 
 def get_ergani_work_type(work_type: ScheduleWorkType) -> str:
+    """
+    Returns the ergani value for work_type
+
+    Args:
+        work_type: The work type of an employee's schedule
+
+    Returns:
+        The Ergani value that is going to be used with the Ergani API
+    """
+
     work_type_mapping = {
         "WORK_FROM_OFFICE": "ΕΡΓ",
         "WORK_FROM_HOME": "ΤΗΛ",
