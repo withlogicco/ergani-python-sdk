@@ -1,4 +1,4 @@
-FROM ghcr.io/withlogicco/poetry:1.6.1-python-3.11
+FROM ghcr.io/withlogicco/poetry:1.7.1-python-3.12
 
 WORKDIR /usr/src/app
 COPY pyproject.toml poetry.lock ./

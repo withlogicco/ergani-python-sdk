@@ -1,0 +1,19 @@
+name: CI
+
+on: push
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - run: pipx install poetry==1.7.1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "poetry"
+      - run: poetry check
+      - run: poetry lock --check
+      - run: poetry install
+      - run: poetry run black --check .
+      - run: poetry run isort --check .
