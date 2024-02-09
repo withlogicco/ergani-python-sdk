@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import date, datetime, time
-from typing import List, Literal, Optional
+from typing import List, Literal, Optional, TypedDict
 
 from ergani.typings import (
     LateDeclarationJustificationType,
@@ -372,3 +372,17 @@ class CompanyWeeklySchedule:
                 ]
             },
         }
+
+    class SubmissionResponse(TypedDict):
+        """
+        Represents a submission response from the Ergani API
+
+        Attributes:
+            submission_id (str): The unique identifier of the submission
+            protocol (str): The protocol associated with the submission
+            submission_date (datetime): The datetime of the submission
+        """
+
+        submission_id: str
+        protocol: str
+        submission_date: datetime
