@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "ergani-python-sdk"
+project = "ergani"
 copyright = "MIT"
 author = "George Margaritis <george@withlogic.co>"
 release = "1.0.0"
