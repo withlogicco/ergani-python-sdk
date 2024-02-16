@@ -1,9 +1,9 @@
-.. ergani-python-sdk documentation master file, created by
+.. ergani documentation master file, created by
    sphinx-quickstart on Fri Feb  2 13:07:54 2024.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to ergani-python-sdk's documentation!
+Welcome to ergani's documentation!
 =============================================
 
 .. toctree::

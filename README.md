@@ -278,7 +278,7 @@ The glossary might help you if you're taking a look at the official documentatio
 | **Original**                 | **Original help text** (in Greek)                            | **Translated**                                  |
 |------------------------------|--------------------------------------------------------------|-------------------------------------------------|
 | `f_aa`                       | Α/Α Παραρτήματος                                             | `business_branch_number`                        |
-| `f_rel_protocol`             | ΣΧΕΤΙΚΟ ΕΝΤΥΠΟ ΑΡΙΘ. ΠΡΩΤ.	                                  | `related_protocol_number`                       |
+| `f_rel_protocol`             | ΣΧΕΤΙΚΟ ΕΝΤΥΠΟ ΑΡΙΘ. ΠΡΩΤ.	                                  | `related_protocol_id`                           |
 | `f_rel_date`                 | ΣΧΕΤΙΚΟ ΕΝΤΥΠΟ ΗΜΕΡΟΜΗΝΙΑ	                                  | `related_protocol_date`                         |
 | `f_ypiresia_sepe`            | ΚΩΔΙΚΟΣ ΥΠΗΡΕΣΙΑΣ ΣΕΠΕ	                                      | `sepe_service_code`                             |
 | `f_ergodotikh_organwsh`      | ΕΡΓΟΔΟΤΙΚΗ ΟΡΓΑΝΩΣΗ	                                        | `employer_organization`                         |
@@ -300,7 +300,7 @@ The glossary might help you if you're taking a look at the official documentatio
 | `f_to`                       | ΩΡΑ ΛΗΞΗΣ ΥΠΕΡΩΡΙΑΣ (HH24:MM)	                              | `overtime_end_time`                             |
 | `f_cancellation`             | ΑΚΥΡΩΣΗ ΥΠΕΡΩΡΙΑΣ	                                          | `overtime_cancellation`                         |
 | `f_step`                     | ΕΙΔΙΚΟΤΗΤΑ ΚΩΔΙΚΟΣ	                                          | `employee_profession_code`                      |
-| `f_reason`                   | ΑΙΤΙΟΛΟΓΙΑ ΚΩΔΙΚΟΣ	                                          | `overtime_justification_code`                   |
+| `f_reason`                   | ΑΙΤΙΟΛΟΓΙΑ ΚΩΔΙΚΟΣ	                                          | `overtime_justification`                        |
 | `f_weekdates`                | ΕΒΔΟΜΑΔΙΑΙΑ ΑΠΑΣΧΟΛΗΣΗ (5) ΠΕΝΘΗΜΕΡΟ (6) ΕΞΑΗΜΕΡΟ            | `weekly_workdays_number`                        |
 | `f_asee`                     | ΕΓΚΡΙΣΗ ΑΣΕΕ	                                                | `asee_approval`                                 |
 
@@ -323,7 +323,7 @@ The glossary might help you if you're taking a look at the official documentatio
 | **Original**           | **Original help text** (in Greek)      | **Translated**                          |
 |------------------------|----------------------------------------|-----------------------------------------|
 | `f_aa_pararthmatos`    | Α/Α ΠΑΡΑΡΤΗΜΑΤΟΣ                       | `business_branch_number`                |
-| `f_rel_protocol`       | ΣΧΕΤΙΚΟ ΕΝΤΥΠΟ ΑΡΙΘ. ΠΡΩΤ.             | `related_protocol_number`               |
+| `f_rel_protocol`       | ΣΧΕΤΙΚΟ ΕΝΤΥΠΟ ΑΡΙΘ. ΠΡΩΤ.             | `related_protocol_id`                   |
 | `f_rel_date`           | ΣΧΕΤΙΚΟ ΕΝΤΥΠΟ ΗΜΕΡΟΜΗΝΙΑ              | `related_protocol_date`                 |
 | `f_comments`           | ΠΑΡΑΤΗΡΗΣΕΙΣ                           | `comments`                              |
 | `f_from_date`          | ΗΜΕΡΟΜΗΝΙΑ ΑΠΟ                         | `start_date`                            |
@@ -342,18 +342,18 @@ The glossary might help you if you're taking a look at the official documentatio
 | **Original**        | **Original help text** (in Greek)                   | **Translated**                        |
 |---------------------|-----------------------------------------------------|---------------------------------------|
 | `f_aa_pararthmatos` | Α/Α ΠΑΡΑΡΤΗΜΑΤΟΣ                                    | `business_brach_number`               |
-| `f_rel_protocol`    | ΣΧΕΤΙΚΟ ΕΝΤΥΠΟ ΑΡΙΘ. ΠΡΩΤ.                          | `related_protocol_number`             |
+| `f_rel_protocol`    | ΣΧΕΤΙΚΟ ΕΝΤΥΠΟ ΑΡΙΘ. ΠΡΩΤ.                          | `related_protocol_id`                 |
 | `f_rel_date`        | ΣΧΕΤΙΚΟ ΕΝΤΥΠΟ ΗΜΕΡΟΜΗΝΙΑ                           | `related_protocol_date`               |
 | `f_comments`        | ΠΑΡΑΤΗΡΗΣΕΙΣ                                        | `comments`                            |
-| `f_from_date`       | ΗΜΕΡΟΜΗΝΙΑ ΑΠΟ                                      | `schedule_start_date`                 |
-| `f_to_date`         | ΗΜΕΡΟΜΗΝΙΑ ΕΩΣ                                      | `schedule_end_date`                   |
+| `f_from_date`       | ΗΜΕΡΟΜΗΝΙΑ ΑΠΟ                                      | `start_date`                          |
+| `f_to_date`         | ΗΜΕΡΟΜΗΝΙΑ ΕΩΣ                                      | `end_date`                            |
 | `f_afm`             | ΑΡΙΘΜΟΣ ΦΟΡΟΛΟΓΙΚΟΥ ΜΗΤΡΩΟΥ (Α.Φ.Μ.)                | `employee_tax_indentification_number` |
 | `f_eponymo`         | ΕΠΩΝΥΜΟ                                             | `employee_last_name`                  |
 | `f_onoma`           | ΟΝΟΜΑ                                               | `employee_first_name`                 |
 | `f_date`            | ΗΜΕΡΟΜΗΝΙΑ                                          | `schedule_date`                       |
 | `f_type`            | ΤΥΠΟΣ ΑΝΑΛΥΤΙΚΗΣ ΕΓΓΡΑΦΗΣ - ΚΩΔΙΚΟΣ                 | `work_type`                           |
-| `f_from`            | ΩΡΑ ΑΠΟ (HH24:MM)                                   | `workday_start_time`                  |
-| `f_to`              | ΩΡΑ ΕΩΣ (HH24:MM)                                   | `workday_end_time`                    |
+| `f_from`            | ΩΡΑ ΑΠΟ (HH24:MM)                                   | `start_time`                          |
+| `f_to`              | ΩΡΑ ΕΩΣ (HH24:MM)                                   | `end_time`                            |
 
 ### Schedule work types
 
