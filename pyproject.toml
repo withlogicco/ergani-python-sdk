@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ergani"
-version = "1.0.0"
+version = "1.0.1"
 description = "Python SDK for the Greek government's Ergani API"
 authors = ["Paris Kasidiaris <paris@withlogic.co>"]
 license = "MIT"
