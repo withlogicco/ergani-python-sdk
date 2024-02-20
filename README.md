@@ -238,6 +238,10 @@ response = ergani_client.submit_weekly_schedule(
 
 **Note:** You can submit weekly schedules for various employees across multiple company branches simultaneously.
 
+---
+
+Full reference documentation is available at [https://ergani.withlogic.dev/](https://ergani.withlogic.dev/).
+
 ## Glossary
 
 The glossary might help you if you're taking a look at the official documentation of the Ergani API (https://eservices.yeka.gr/(S(ayldvlj35eukgvmzrr055oe5))/Announcements.aspx?id=257).
