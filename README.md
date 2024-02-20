@@ -14,6 +14,10 @@ The `ergani` package is available on PyPI and you can install it through your fa
 pip install ergani
 ```
 
+## Documentation
+
+You can find further documentation at [https://ergani.withlogic.dev/](https://ergani.withlogic.dev/).
+
 ## Usage
 
 ### Create a client
