@@ -14,10 +14,6 @@ The `ergani` package is available on PyPI and you can install it through your fa
 pip install ergani
 ```
 
-## Documentation
-
-You can find further documentation at [https://ergani.withlogic.dev/](https://ergani.withlogic.dev/).
-
 ## Usage
 
 ### Create a client
@@ -241,6 +237,10 @@ response = ergani_client.submit_weekly_schedule(
 ```
 
 **Note:** You can submit weekly schedules for various employees across multiple company branches simultaneously.
+
+---
+
+Full reference documentation is available at [https://ergani.withlogic.dev/](https://ergani.withlogic.dev/).
 
 ## Glossary
 
