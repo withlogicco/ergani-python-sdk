@@ -368,6 +368,10 @@ The glossary might help you if you're taking a look at the official documentatio
 | `ΤΗΛ`                  | ΤΗΛΕΡΓΑΣΙΑ                          | `WORK_FROM_HOME`   |
 | `ΕΡΓ`                  | ΕΡΓΑΣΙΑ                             | `WORK_FROM_OFFICE` |
 
+
+## Ports
+- [`ergani`](https://github.com/pavlospt/ergani-rust-sdk) Rust SDK by [`@pavlospt`](https://github.com/pavlospt)
+
 ## License
 
 This project is licensed under the [`MIT License`](LICENSE)
