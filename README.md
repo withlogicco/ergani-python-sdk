@@ -2,6 +2,14 @@
 
 `ergani` is a Python SDK for interacting with the API of [Ergani](https://www.gov.gr/en/ipiresies/ergasia-kai-asphalise/apozemioseis-kai-parokhes/prosopopoiemene-plerophorese-misthotou-ergane).
 
+> [!TIP]
+> ## 🌟 Production ready 🌟
+>
+> The Ergani Python SDK is battle-tested for production in:
+>
+> - **JobCard** (https://jobcard.gr): Turnkey self-service solution for the digital work card time attendance tracking and digital scheduling
+> - **Digital work card solutions with LOGIC** (https://withlogic.co/solutions/digital-work-card): Custom digital work card solutions, tailor-made for the most demanding businesses.
+
 ## Requirements
 
 Python 3.10 or later
