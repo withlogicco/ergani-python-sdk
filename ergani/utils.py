@@ -209,10 +209,46 @@ def get_ergani_work_type(work_type: ScheduleWorkType) -> str:
     """
 
     work_type_mapping = {
-        "WORK_FROM_OFFICE": "ΕΡΓ",
-        "WORK_FROM_HOME": "ΤΗΛ",
-        "REST_DAY": "ΑΝ",
-        "ABSENT": "ΜΕ",
+        "WORK_FROM_OFFICE": "ΕΡΓ",  # ΕΡΓΑΣΙΑ
+        "WORK_FROM_HOME": "ΤΗΛ",  # ΤΗΛΕΡΓΑΣΙΑ
+        "REST_DAY": "ΑΝ",  # ΑΝΑΠΑΥΣΗ/ΡΕΠΟ
+        "NO_WORK": "ΜΕ",  # ΜΗ ΕΡΓΑΣΙΑ
+        "REGULAR_LEAVE": "ΑΔΚΑΝ",  # Κανονική άδεια
+        "BLOOD_DONATION_LEAVE": "ΑΔΑΙΜ",  # Αιμοδοτική άδεια
+        "EXAMINATION_LEAVE": "ΑΔΕΞ",  # Άδεια εξετάσεων
+        "UNPAID_LEAVE": "ΑΔΑΑ",  # Άδεια άνευ αποδοχών
+        "MATERNITY_LEAVE": "ΑΔΜΗ",  # Άδεια μητρότητας
+        "SPECIAL_MATERNITY_PROTECTION": "ΑΔΠΠΜ",  # Ειδική παροχή προστασίας της μητρότητας
+        "PATERNITY_LEAVE": "ΑΔΠΑ",  # Άδεια πατρότητας
+        "CHILD_CARE_LEAVE": "ΑΔΦΠ",  # Άδεια φροντίδας παιδιού
+        "PARENTAL_LEAVE": "ΑΔΓΟΝ",  # Γονική άδεια
+        "CAREGIVER_LEAVE": "ΑΔΦΡΟ",  # Άδεια φροντιστή
+        "FORCE_MAJEURE_ABSENCE": "ΑΔΑΠΑΒ",  # Απουσία από την εργασία για λόγους ανωτέρας βίας
+        "ASSISTED_REPRODUCTION_LEAVE": "ΑΔΙΥΑ",  # Άδεια για υποβολή σε μεθόδους ιατρικώς υποβοηθούμενης αναπαραγωγής
+        "PRENATAL_EXAMINATION_LEAVE": "ΑΔΠΕ",  # Άδεια εξετάσεων προγεννητικού ελέγχου
+        "MARRIAGE_LEAVE": "ΑΔΓΑΜ",  # Άδεια γάμου
+        "SERIOUS_CHILD_ILLNESS_LEAVE": "ΑΔΣΝΠ",  # Άδεια λόγω σοβαρών νοσημάτων των παιδιών
+        "CHILD_HOSPITALIZATION_LEAVE": "ΑΔΝΠ",  # Άδεια λόγω νοσηλείας των παιδιών
+        "SINGLE_PARENT_FAMILY_LEAVE": "ΑΔΜΟ",  # Άδεια μονογονεϊκών οικογενειών
+        "CHILD_SCHOOL_PERFORMANCE_LEAVE": "ΑΔΠΣΕΤ",  # Άδεια παρακολούθησης σχολικής επίδοσης τέκνου
+        "DEPENDENT_MEMBER_ILLNESS_LEAVE": "ΑΔΑΠΕΜ",  # Άδεια λόγω ασθένειας παιδιού ή άλλου εξαρτώμενου μέλους
+        "VIOLENCE_HARASSMENT_DANGER_ABSENCE": "ΑΔΑΠΣΚ",  # Απουσία από την εργασία λόγω επικείμενου σοβαρού κινδύνου βίας ή παρενόχλησης
+        "SICK_LEAVE": "ΑΔΑΣ",  # Άδεια ασθένειας (ανυπαίτιο κώλυμα παροχής εργασίας)
+        "DISABILITY_ABSENCE_LEAVE": "ΑΔΑΜΕΑ",  # Άδεια απουσίας Α.Μ.Ε.Α.
+        "BEREAVEMENT_LEAVE": "ΑΔΘΣΥΓ",  # Άδεια λόγω θανάτου συγγενούς
+        "MINOR_STUDENT_LEAVE": "ΑΔΑΝΣΠ",  # Άδεια ανήλικων σπουδαστών
+        "BLOOD_TRANSFUSION_DIALYSIS_LEAVE": "ΑΔΜΑΑ",  # Άδεια για μεταγγίσεις αίματος και των παραγώγων του ή αιμοκάθαρση
+        "EDUCATIONAL_LEAVE_VOCATIONAL_TRAINING": "ΑΔΕΚΦ",  # Εκπαιδευτική άδεια για φοιτητές στο Κ.ΑΝ.Ε.Π. - Γ.Σ.Ε.Ε.
+        "AIDS_LEAVE": "ΑΔΣΕΑΑ",  # Άδεια λόγω AIDS
+        "FLEXIBLE_WORK_ARRANGEMENTS": "ΑΔΕΡΕ",  # Ευέλικτες ρυθμίσεις εργασίας
+        "CHILD_CARE_LEAVE_HOURS": "ΩΑΦΠ",  # Άδεια φροντίδας παιδιού (ΩΡΕΣ)
+        "PARENTAL_LEAVE_HOURS": "ΩΑΓΟΝ",  # Γονική άδεια (ΩΡΕΣ)
+        "FORCE_MAJEURE_ABSENCE_HOURS": "ΩΑΑΠΑΒ",  # Απουσία από την εργασία για λόγους ανωτέρας βίας (ΩΡΕΣ)
+        "FLEXIBLE_WORK_ARRANGEMENTS_HOURS": "ΩΑΕΡΕ",  # Ευέλικτες ρυθμίσεις εργασίας (ΩΡΕΣ)
+        "PRENATAL_EXAMINATION_LEAVE_HOURS": "ΩΑΠΕ",  # Άδεια εξετάσεων προγεννητικού ελέγχου (ΩΡΕΣ)
+        "CHILD_SCHOOL_PERFORMANCE_LEAVE_HOURS": "ΩΑΠΣΕΤ",  # Άδεια παρακολούθησης σχολικής επίδοσης τέκνου (ΩΡΕΣ)
+        "OTHER_LEAVE": "ΑΔΑΛ",  # Άδεια Άλλη
+        "OTHER_LEAVE_HOURS": "ΩΑΑΛ",  # Άδεια Άλλη (ΩΡΕΣ)
     }
 
     return work_type_mapping[work_type]
