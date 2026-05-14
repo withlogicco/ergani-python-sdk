@@ -13,6 +13,11 @@ from ergani.models import (
     CompanyWorkCard,
     SubmissionResponse,
 )
+from ergani.query_models import (
+    MonthlyStatusRecord,
+    MonthlyStatusRequest,
+    parse_monthly_status_list,
+)
 from ergani.utils import extract_error_message, normalize_base_url
 
 
@@ -278,5 +283,45 @@ class ErganiClient:
             APIError: An error occurred while communicating with the Ergani API
             AuthenticationError: Raised if there is an authentication error with the Ergani API
         """
-
         return self._request("GET", "/WebServices/ServicesList", None)
+
+    def get_monthly_status(
+        self, report_year: int, report_month: int
+    ) -> List[MonthlyStatusRecord]:
+        """
+        Fetches EX_BASE_04 monthly status records for the requested reporting period.
+
+        The current trial service metadata only documents the request fields, so each
+        returned record preserves the raw response object instead of projecting
+        undocumented attributes into the SDK surface.
+
+        Args:
+            report_year (int): The reporting year.
+            report_month (int): The reporting month, from 1 through 12.
+
+        Returns:
+            List[MonthlyStatusRecord]: Monthly status records wrapped around the raw
+                payload objects returned by the service.
+
+        Raises:
+            ValueError: If the reporting year or month falls outside the supported range.
+            APIError: An error occurred while communicating with the Ergani API.
+            AuthenticationError: Raised if there is an authentication error with the
+                Ergani API.
+        """
+
+        request = MonthlyStatusRequest(
+            report_year=report_year,
+            report_month=report_month,
+        )
+        response = self._execute_service("EX_BASE_04", request.serialize())
+
+        if response is None:
+            return []
+
+        try:
+            payload = response.json()
+        except ValueError as error:
+            raise ValueError("EX_BASE_04 returned a non-JSON response") from error
+
+        return parse_monthly_status_list(payload)

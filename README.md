@@ -246,6 +246,19 @@ response = ergani_client.submit_weekly_schedule(
 
 **Note:** You can submit weekly schedules for various employees across multiple company branches simultaneously.
 
+### Monthly status
+
+Fetch monthly status records from the ``EX_BASE_04`` ExecuteService endpoint for a specific reporting period.
+
+```py
+records = ergani_client.get_monthly_status(report_year=2026, report_month=4)
+
+for record in records:
+    print(record.raw_payload)
+```
+
+``MonthlyStatusRecord`` intentionally exposes the raw payload because the trial environment's service metadata documents the request fields but not a stable response schema.
+
 ---
 
 Full reference documentation is available at [https://ergani.withlogic.dev/](https://ergani.withlogic.dev/).
