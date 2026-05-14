@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from datetime import date, datetime, time
-from typing import List, Literal, Optional, TypedDict
+from typing import Any, Dict, List, Literal, Optional, TypedDict
 
 from ergani.typings import (
     LateDeclarationJustificationType,
@@ -19,6 +21,83 @@ from ergani.utils import (
     get_ergani_work_type,
     get_ergani_workcard_movement_type,
 )
+
+
+@dataclass
+class BusinessBranch:
+    """
+    Represents a business branch returned by the Ergani query services.
+
+    Attributes:
+        branch_number (Optional[int]): The verified branch identifier used by later
+            query endpoints when present in the payload.
+        address (Optional[str]): The branch address when returned by EX_BASE_02.
+        sepe_service_code (Optional[str]): The SEPE service code for the branch.
+        oaed_service_code (Optional[str]): The OAED service code for the branch.
+        business_branch_activity_code (Optional[str]): The branch activity code.
+        kallikratis_municipal_code (Optional[str]): The Kallikratis municipal code.
+        status_description (Optional[str]): The current branch status description.
+        raw_payload (Dict[str, Any]): The original response object returned by the API.
+    """
+
+    branch_number: Optional[int]
+    address: Optional[str]
+    sepe_service_code: Optional[str]
+    oaed_service_code: Optional[str]
+    business_branch_activity_code: Optional[str]
+    kallikratis_municipal_code: Optional[str]
+    status_description: Optional[str]
+    raw_payload: Dict[str, Any]
+
+    @classmethod
+    def parse(cls, payload: Any) -> BusinessBranch:
+        branch_payload = cls._parse_payload(payload)
+
+        return cls(
+            branch_number=_parse_int(branch_payload.get("Aa")),
+            address=branch_payload.get("Address"),
+            sepe_service_code=branch_payload.get("YpiresiaSepe"),
+            oaed_service_code=branch_payload.get("YpiresiaOaed"),
+            business_branch_activity_code=branch_payload.get("Kad"),
+            kallikratis_municipal_code=branch_payload.get("Kallikratis"),
+            status_description=branch_payload.get("StatusDescription"),
+            raw_payload=dict(branch_payload),
+        )
+
+    @classmethod
+    def parse_many(cls, payload: Any) -> List[BusinessBranch]:
+        if payload is None:
+            return []
+
+        return [cls.parse(payload)]
+
+    @classmethod
+    def _parse_payload(cls, payload: Any) -> Dict[str, Any]:
+        if not isinstance(payload, dict):
+            raise ValueError("Expected EX_BASE_02 payload to be an object")
+
+        if "EX_BASE_02" in payload:
+            payload = payload["EX_BASE_02"]
+
+        if not isinstance(payload, dict):
+            raise ValueError("Expected EX_BASE_02 payload to contain an object")
+
+        branch_payload = payload.get("Pararthma", payload)
+
+        if not isinstance(branch_payload, dict):
+            raise ValueError("Expected EX_BASE_02 branch payload to be an object")
+
+        return branch_payload
+
+
+def _parse_int(value: Any) -> Optional[int]:
+    if value is None or value == "":
+        return None
+
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
 
 
 @dataclass

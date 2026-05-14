@@ -7,6 +7,7 @@ from requests.models import Response
 from ergani.auth import ErganiAuthentication
 from ergani.exceptions import APIError, AuthenticationError
 from ergani.models import (
+    BusinessBranch,
     CompanyDailySchedule,
     CompanyOvertime,
     CompanyWeeklySchedule,
@@ -280,3 +281,28 @@ class ErganiClient:
         """
 
         return self._request("GET", "/WebServices/ServicesList", None)
+
+    def get_branch_details(self) -> List[BusinessBranch]:
+        """
+        Fetches the authenticated employer's branch details from the Ergani API.
+
+        Returns:
+            List[BusinessBranch]: The parsed branch detail entries.
+
+        Raises:
+            APIError: An error occurred while communicating with the Ergani API
+            AuthenticationError: Raised if there is an authentication error with the Ergani API
+            ValueError: The response payload could not be parsed as a branch list
+        """
+
+        response = self._execute_service("EX_BASE_02")
+
+        if response is None:
+            return BusinessBranch.parse_many(None)
+
+        try:
+            payload = response.json()
+        except ValueError as error:
+            raise ValueError("EX_BASE_02 returned a non-JSON response") from error
+
+        return BusinessBranch.parse_many(payload)
