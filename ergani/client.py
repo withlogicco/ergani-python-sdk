@@ -13,6 +13,11 @@ from ergani.models import (
     CompanyWorkCard,
     SubmissionResponse,
 )
+from ergani.query_models import (
+    ParameterCatalogType,
+    ParameterOption,
+    parse_parameter_options,
+)
 from ergani.utils import extract_error_message, normalize_base_url
 
 
@@ -280,3 +285,18 @@ class ErganiClient:
         """
 
         return self._request("GET", "/WebServices/ServicesList", None)
+
+    def get_parameters(self, parameter: ParameterCatalogType) -> List[ParameterOption]:
+        """Fetches EX_BASE_03 parameter catalog options."""
+
+        response = self._execute_service("EX_BASE_03", {"Parameter": parameter})
+
+        if response is None:
+            return []
+
+        try:
+            payload = response.json()
+        except ValueError as error:
+            raise ValueError("EX_BASE_03 returned a non-JSON response") from error
+
+        return parse_parameter_options(payload)
