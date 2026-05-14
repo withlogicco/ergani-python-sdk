@@ -27,6 +27,14 @@ class NormalizeBaseUrlTests(TestCase):
             "https://example.com/custom/path",
         )
 
+    def test_preserves_existing_api_path(self) -> None:
+        normalized = normalize_base_url("https://example.com/WebServicesAPI/api")
+
+        self.assertEqual(
+            normalized,
+            "https://example.com/WebServicesAPI/api",
+        )
+
     def test_trims_surrounding_whitespace(self) -> None:
         normalized = normalize_base_url("  https://example.com/custom/path/  ")
 
