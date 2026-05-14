@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from datetime import date, datetime, time
-from typing import List, Literal, Optional, TypedDict
+from typing import Any, Dict, List, Literal, Optional, TypedDict
 
 from ergani.typings import (
     LateDeclarationJustificationType,
@@ -19,6 +21,215 @@ from ergani.utils import (
     get_ergani_work_type,
     get_ergani_workcard_movement_type,
 )
+
+
+@dataclass(frozen=True)
+class CurrentWorkforceRequest:
+    afm: str | None = None
+
+    def serialize(self) -> Dict[str, Any]:
+        payload: Dict[str, Any] = {}
+
+        if self.afm is not None:
+            payload["afm"] = self.afm
+
+        return payload
+
+
+@dataclass
+class CurrentWorkforceRecord:
+    employee_tax_identification_number: str | None = None
+    employee_last_name: str | None = None
+    employee_first_name: str | None = None
+    employee_father_first_name: str | None = None
+    employee_mother_first_name: str | None = None
+    birth_date: str | None = None
+    sex: str | None = None
+    nationality: str | None = None
+    marital_status: str | None = None
+    number_of_children: int | None = None
+    tax_office: str | None = None
+    unemployment_card_code: str | None = None
+    social_security_registry_number: str | None = None
+    social_security_number: str | None = None
+    address: str | None = None
+    postal_code: str | None = None
+    phone_number: str | None = None
+    kallikratis_municipal_code: str | None = None
+    underage_work_book_number: str | None = None
+    identity_document_type: str | None = None
+    identity_document_number: str | None = None
+    identity_document_issuing_authority: str | None = None
+    identity_document_issue_date: str | None = None
+    residence_permit_installment: str | None = None
+    residence_permit_installment_number: str | None = None
+    residence_permit_approval: str | None = None
+    residence_permit_approval_number: str | None = None
+    residence_permit_visa: str | None = None
+    residence_permit_visa_number: str | None = None
+    branch_number: int | None = None
+    employment_start_date: str | None = None
+    specialty: str | None = None
+    employee_classification: str | None = None
+    profession_code: str | None = None
+    weekly_workdays: str | None = None
+    prior_experience: str | None = None
+    employment_relationship: str | None = None
+    responsible_position: str | None = None
+    employment_status: str | None = None
+    weekly_hours: str | None = None
+    working_schedule: str | None = None
+    break_schedule: str | None = None
+    workplace: str | None = None
+    workplace_comments: str | None = None
+    wage_payment_frequency: str | None = None
+    unpredictable_work_schedule: str | None = None
+    on_demand_days_and_hours: str | None = None
+    on_demand_minimum_notification: str | None = None
+    on_demand_notes: str | None = None
+    mandatory_training: str | None = None
+    applicable_collective_agreement: str | None = None
+    applicable_collective_agreement_comments: str | None = None
+    working_time_arrangement: str | None = None
+    working_time_arrangement_comments: str | None = None
+    gross_pay: str | None = None
+    hourly_pay: str | None = None
+    primary_insurance: str | None = None
+    supplementary_insurance: str | None = None
+    additional_insurance_benefits: str | None = None
+    trial_period: str | None = None
+    borrowing_company_tax_identification_number: str | None = None
+    change_date: str | None = None
+    education_level: str | None = None
+    professional_education: str | None = None
+    pc_provided: str | None = None
+    working_time_digital_organization: str | None = None
+    full_employment_hours: str | None = None
+    break_minutes: int | None = None
+    break_within_schedule: str | None = None
+    working_card: str | None = None
+    flexible_working_hours: str | None = None
+    last_modified_date: str | None = None
+    raw_payload: Dict[str, Any] = field(default_factory=dict)
+
+    @classmethod
+    def parse_many(cls, payload: Any) -> List[CurrentWorkforceRecord]:
+        workforce_payloads = cls._parse_payloads(payload)
+
+        return [cls.parse(payload) for payload in workforce_payloads]
+
+    @classmethod
+    def parse(cls, payload: Any) -> CurrentWorkforceRecord:
+        if not isinstance(payload, dict):
+            raise ValueError(
+                "Expected current workforce record payload to be an object"
+            )
+
+        return cls(
+            employee_tax_identification_number=payload.get("afm"),
+            employee_last_name=payload.get("Eponimo"),
+            employee_first_name=payload.get("Onoma"),
+            employee_father_first_name=payload.get("OnomaPatera"),
+            employee_mother_first_name=payload.get("OnomaMiteras"),
+            birth_date=payload.get("BirthDate"),
+            sex=payload.get("Sex"),
+            nationality=payload.get("Nationality"),
+            marital_status=payload.get("MaritalStatus"),
+            number_of_children=_parse_int(payload.get("NumChildren")),
+            tax_office=payload.get("Doy"),
+            unemployment_card_code=payload.get("CodeAnergias"),
+            social_security_registry_number=payload.get("AmIka"),
+            social_security_number=payload.get("Amka"),
+            address=payload.get("Dieythinsi"),
+            postal_code=payload.get("Tk"),
+            phone_number=payload.get("Tilefwno"),
+            kallikratis_municipal_code=payload.get("Kallikratis"),
+            underage_work_book_number=payload.get("ArVivliouAnilikou"),
+            identity_document_type=payload.get("TyposTaytotitas"),
+            identity_document_number=payload.get("ArTaytotitas"),
+            identity_document_issuing_authority=payload.get("EkdousaArxi"),
+            identity_document_issue_date=payload.get("DateEkdosis"),
+            residence_permit_installment=payload.get("ResPermitInst"),
+            residence_permit_installment_number=payload.get("ResPermitInstAr"),
+            residence_permit_approval=payload.get("ResPermitAp"),
+            residence_permit_approval_number=payload.get("ResPermitApAr"),
+            residence_permit_visa=payload.get("ResPermitVisa"),
+            residence_permit_visa_number=payload.get("ResPermitVisaAr"),
+            branch_number=_parse_int(payload.get("PararthmaAa")),
+            employment_start_date=payload.get("DateFrom"),
+            specialty=payload.get("Eidikothta"),
+            employee_classification=payload.get("asXaraktirismos"),
+            profession_code=payload.get("Step"),
+            weekly_workdays=payload.get("WeekDays"),
+            prior_experience=payload.get("Proipiresia"),
+            employment_relationship=payload.get("SxesiApasxolisis"),
+            responsible_position=payload.get("ResponsiblePosition"),
+            employment_status=payload.get("KathestosApasxolisis"),
+            weekly_hours=payload.get("WeekHours"),
+            working_schedule=payload.get("Orario"),
+            break_schedule=payload.get("Dialeimma"),
+            workplace=payload.get("ToposErgasias"),
+            workplace_comments=payload.get("ToposErgasiasComments"),
+            wage_payment_frequency=payload.get("XronosKatabolisApodoxwn"),
+            unpredictable_work_schedule=payload.get("MhProblepsimoProgrammaErgasias"),
+            on_demand_days_and_hours=payload.get("ParaggeliaHmeresHours"),
+            on_demand_minimum_notification=payload.get("ParaggeliaMinNotification"),
+            on_demand_notes=payload.get("ParaggeliaNotes"),
+            mandatory_training=payload.get("IpoxreotikiKatartisi"),
+            applicable_collective_agreement=payload.get("EfarmosteaSyllogikiSymbasi"),
+            applicable_collective_agreement_comments=payload.get(
+                "EfarmosteaSyllogikiSymbasiComments"
+            ),
+            working_time_arrangement=payload.get("Dieythetisi"),
+            working_time_arrangement_comments=payload.get("DieythetisiComments"),
+            gross_pay=payload.get("Apodoxes"),
+            hourly_pay=payload.get("HourApodoxes"),
+            primary_insurance=payload.get("KyriaAsfalisi"),
+            supplementary_insurance=payload.get("EpikourikiAsfalisi"),
+            additional_insurance_benefits=payload.get("ProsthetesAsfalistikesParoxes"),
+            trial_period=payload.get("TrialPeriod"),
+            borrowing_company_tax_identification_number=payload.get("BorrowCompanyAfm"),
+            change_date=payload.get("DateMetabolhs"),
+            education_level=payload.get("EpipedoMorfosis"),
+            professional_education=payload.get("ProfessionalEducation"),
+            pc_provided=payload.get("Pc"),
+            working_time_digital_organization=payload.get(
+                "WorkingTimeDigitalOrganization"
+            ),
+            full_employment_hours=payload.get("FullEmploymentHours"),
+            break_minutes=_parse_int(payload.get("DialeimmaMinutes")),
+            break_within_schedule=payload.get("DialeimmaEntosWrariou"),
+            working_card=payload.get("WorkingCard"),
+            flexible_working_hours=payload.get("EueliktoWrario"),
+            last_modified_date=payload.get("LastModifiedDate"),
+            raw_payload=dict(payload),
+        )
+
+    @classmethod
+    def _parse_payloads(cls, payload: Any) -> List[Dict[str, Any]]:
+        if payload is None:
+            return []
+
+        if isinstance(payload, dict) and "EX_BASE_05" in payload:
+            payload = payload["EX_BASE_05"]
+
+        if isinstance(payload, dict) and "Cur" in payload:
+            payload = payload["Cur"]
+
+        if not isinstance(payload, list):
+            raise ValueError("Expected current workforce response payload to be a list")
+
+        return payload
+
+
+def _parse_int(value: Any) -> int | None:
+    if value is None or value == "":
+        return None
+
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
 
 
 @dataclass

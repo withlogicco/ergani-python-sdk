@@ -11,6 +11,8 @@ from ergani.models import (
     CompanyOvertime,
     CompanyWeeklySchedule,
     CompanyWorkCard,
+    CurrentWorkforceRecord,
+    CurrentWorkforceRequest,
     SubmissionResponse,
 )
 from ergani.utils import extract_error_message, normalize_base_url
@@ -280,3 +282,33 @@ class ErganiClient:
         """
 
         return self._request("GET", "/WebServices/ServicesList", None)
+
+    def get_current_workforce(
+        self, afm: Optional[str] = None
+    ) -> List[CurrentWorkforceRecord]:
+        """
+        Fetches current workforce records from the Ergani API.
+
+        Args:
+            afm (Optional[str]): Optional employee tax identification number filter.
+                ``None`` omits the ``afm`` key from the request payload. An empty
+                string is serialized as ``{"afm": ""}``.
+
+        Returns:
+            List[CurrentWorkforceRecord]: Current workforce records, each wrapping
+            the raw response object returned by the API.
+
+        Raises:
+            APIError: An error occurred while communicating with the Ergani API
+            AuthenticationError: Raised if there is an authentication error with the Ergani API
+        """
+
+        parameters = CurrentWorkforceRequest(afm=afm).serialize()
+        response = self._execute_service("EX_BASE_05", parameters)
+
+        if not response:
+            return CurrentWorkforceRecord.parse_many(None)
+
+        payload = response.json()
+
+        return CurrentWorkforceRecord.parse_many(payload)
