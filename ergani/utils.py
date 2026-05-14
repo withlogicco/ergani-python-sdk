@@ -45,6 +45,13 @@ def extract_error_message(response: Response) -> str:
     return ""
 
 
+def normalize_base_url(base_url: Optional[str]) -> str:
+    if not base_url:
+        return ""
+
+    return base_url.rstrip("/")
+
+
 def format_time(t: time) -> str:
     """
     Formats a datetime.time instance to `HH:MM`

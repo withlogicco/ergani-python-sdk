@@ -5,7 +5,7 @@ from requests.auth import AuthBase
 from requests.models import PreparedRequest
 
 from ergani.exceptions import AuthenticationError
-from ergani.utils import extract_error_message
+from ergani.utils import extract_error_message, normalize_base_url
 
 
 class ErganiAuthentication(AuthBase):
@@ -21,7 +21,7 @@ class ErganiAuthentication(AuthBase):
     ) -> None:
         self.username = username
         self.password = password
-        self.base_url = base_url
+        self.base_url = normalize_base_url(base_url)
         self.access_token = self._authenticate()
 
     def __call__(self, request: PreparedRequest) -> PreparedRequest:
@@ -42,5 +42,11 @@ class ErganiAuthentication(AuthBase):
             error_message = extract_error_message(response)
             raise AuthenticationError(message=error_message, response=response)
 
-        token = response.json()["accessToken"]
+        try:
+            token = response.json()["accessToken"]
+        except ValueError as error:
+            preview = response.text.strip().splitlines()[0][:200] if response.text else ""
+            error_message = preview or "Authentication response was not valid JSON"
+            raise AuthenticationError(message=error_message, response=response) from error
+
         return token
