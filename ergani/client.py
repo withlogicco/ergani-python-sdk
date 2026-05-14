@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional, TypeVar, overload
 
 import requests
 from requests.models import Response
@@ -13,7 +13,11 @@ from ergani.models import (
     CompanyWorkCard,
     SubmissionResponse,
 )
+from ergani.query_models import QueryParser, QueryPayload, QueryRequest
 from ergani.utils import extract_error_message
+
+
+ParsedQueryType = TypeVar("ParsedQueryType")
 
 
 class ErganiClient:
@@ -34,7 +38,7 @@ class ErganiClient:
     ) -> None:
         self.username = username
         self.password = password
-        self.base_url = base_url
+        self.base_url = base_url.rstrip("/")
 
     def _request(
         self, method: str, endpoint: str, payload: Optional[Dict[str, Any]] = None
@@ -97,6 +101,92 @@ class ErganiClient:
         except:
             error_message = extract_error_message(response)
             raise APIError(message=error_message, response=response, payload=payload)
+
+    def _serialize_query_payload(
+        self, payload: Optional[QueryPayload | QueryRequest]
+    ) -> Optional[QueryPayload]:
+        if payload is None:
+            return None
+
+        if isinstance(payload, dict):
+            return payload
+
+        if isinstance(payload, QueryRequest):
+            return payload.serialize()
+
+        raise TypeError("Query payload must be a dict or implement serialize()")
+
+    def _extract_query_result(
+        self, response: Optional[Response], service_name: str
+    ) -> Any:
+        if response is None:
+            return None
+
+        try:
+            return response.json()
+        except ValueError as error:
+            raise ValueError(
+                f"Query service {service_name} returned a non-JSON response"
+            ) from error
+
+    @overload
+    def _query_service(
+        self,
+        service_name: str,
+        payload: Optional[QueryPayload | QueryRequest] = None,
+        *,
+        method: str = "POST",
+        parser: None = None,
+        raw_response: Literal[False] = False,
+    ) -> Any:
+        ...
+
+    @overload
+    def _query_service(
+        self,
+        service_name: str,
+        payload: Optional[QueryPayload | QueryRequest] = None,
+        *,
+        method: str = "POST",
+        parser: QueryParser[ParsedQueryType],
+        raw_response: Literal[False] = False,
+    ) -> ParsedQueryType:
+        ...
+
+    @overload
+    def _query_service(
+        self,
+        service_name: str,
+        payload: Optional[QueryPayload | QueryRequest] = None,
+        *,
+        method: str = "POST",
+        parser: Optional[QueryParser[ParsedQueryType]] = None,
+        raw_response: Literal[True],
+    ) -> Optional[Response]:
+        ...
+
+    def _query_service(
+        self,
+        service_name: str,
+        payload: Optional[QueryPayload | QueryRequest] = None,
+        *,
+        method: str = "POST",
+        parser: Optional[QueryParser[ParsedQueryType]] = None,
+        raw_response: bool = False,
+    ) -> Any | ParsedQueryType | Optional[Response]:
+        serialized_payload = self._serialize_query_payload(payload)
+        endpoint = f"/WebServices/{service_name}"
+        response = self._request(method.upper(), endpoint, serialized_payload)
+
+        if raw_response:
+            return response
+
+        data = self._extract_query_result(response, service_name)
+
+        if parser is None:
+            return data
+
+        return parser(data)
 
     def _extract_submission_result(
         self, response: Optional[Response]
@@ -253,3 +343,17 @@ class ErganiClient:
         response = self._request("POST", endpoint, request_payload)
 
         return self._extract_submission_result(response)
+
+    def get_services_list(self) -> Optional[Response]:
+        """
+        Fetches the available services list from the Ergani API.
+
+        Returns:
+            Optional[Response]: The raw response returned by the services list endpoint.
+
+        Raises:
+            APIError: An error occurred while communicating with the Ergani API
+            AuthenticationError: Raised if there is an authentication error with the Ergani API
+        """
+
+        return self._query_service("ServicesList", method="GET", raw_response=True)

@@ -1,6 +1,7 @@
 import json
 from datetime import date, datetime, time
-from typing import Optional, Union
+from urllib.parse import urlsplit, urlunsplit
+from typing import Any, List, Optional, Union
 
 from requests.models import Response
 
@@ -10,6 +11,16 @@ from ergani.typings import (
     ScheduleWorkType,
     WorkCardMovementType,
 )
+
+
+def _normalize_scalar(value: Any) -> str:
+    if value is None:
+        return ""
+
+    if isinstance(value, str):
+        return value.strip()
+
+    return str(value).strip()
 
 
 def extract_error_message(response: Response) -> str:
@@ -60,6 +71,129 @@ def format_time(t: time) -> str:
         return ""
 
     return t.strftime("%H:%M")
+
+
+def parse_date(value: Any) -> Optional[date]:
+    if value in (None, ""):
+        return None
+
+    if isinstance(value, date) and not isinstance(value, datetime):
+        return value
+
+    if isinstance(value, datetime):
+        return value.date()
+
+    normalized_value = _normalize_scalar(value)
+    for date_format in ("%d/%m/%Y", "%Y-%m-%d"):
+        try:
+            return datetime.strptime(normalized_value, date_format).date()
+        except ValueError:
+            continue
+
+    raise ValueError(f"Unsupported date value: {value}")
+
+
+def parse_datetime(value: Any) -> Optional[datetime]:
+    if value in (None, ""):
+        return None
+
+    if isinstance(value, datetime):
+        return value
+
+    normalized_value = _normalize_scalar(value)
+    iso_value = normalized_value.replace("Z", "+00:00")
+
+    try:
+        return datetime.fromisoformat(iso_value)
+    except ValueError:
+        pass
+
+    for datetime_format in (
+        "%d/%m/%Y %H:%M",
+        "%d/%m/%Y %H:%M:%S",
+        "%Y-%m-%d %H:%M:%S",
+        "%Y-%m-%dT%H:%M:%S",
+        "%Y-%m-%dT%H:%M:%S.%f",
+        "%Y-%m-%dT%H:%M:%S%z",
+        "%Y-%m-%dT%H:%M:%S.%f%z",
+    ):
+        try:
+            return datetime.strptime(normalized_value, datetime_format)
+        except ValueError:
+            continue
+
+    raise ValueError(f"Unsupported datetime value: {value}")
+
+
+def parse_int(value: Any) -> Optional[int]:
+    if value in (None, ""):
+        return None
+
+    if isinstance(value, bool):
+        return int(value)
+
+    if isinstance(value, int):
+        return value
+
+    if isinstance(value, float):
+        if value.is_integer():
+            return int(value)
+        raise ValueError(f"Unsupported integer value: {value}")
+
+    normalized_value = _normalize_scalar(value)
+    return int(normalized_value)
+
+
+def parse_bool(value: Any) -> Optional[bool]:
+    if value in (None, ""):
+        return None
+
+    if isinstance(value, bool):
+        return value
+
+    if isinstance(value, int):
+        if value in (0, 1):
+            return bool(value)
+        raise ValueError(f"Unsupported boolean value: {value}")
+
+    normalized_value = _normalize_scalar(value).lower()
+
+    truthy_values = {"1", "true", "yes", "y"}
+    falsy_values = {"0", "false", "no", "n"}
+
+    if normalized_value in truthy_values:
+        return True
+
+    if normalized_value in falsy_values:
+        return False
+
+    raise ValueError(f"Unsupported boolean value: {value}")
+
+
+def parse_status_code(value: Any) -> Optional[str]:
+    if value in (None, ""):
+        return None
+
+    if isinstance(value, bool):
+        return str(int(value))
+
+    if isinstance(value, float):
+        if value.is_integer():
+            return str(int(value))
+        raise ValueError(f"Unsupported status code value: {value}")
+
+    normalized_value = _normalize_scalar(value)
+    return normalized_value or None
+
+
+def parse_list(value: Any) -> List[Any]:
+    if value in (None, ""):
+        return []
+
+    if not isinstance(value, list):
+        raise ValueError("Expected a list value")
+
+    return value
 
 
 def format_date(d: Optional[date]) -> str:
