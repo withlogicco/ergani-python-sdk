@@ -27,6 +27,7 @@ dev = [
 	"types-requests>=2.31.0.10,<3",
 	"sphinx>=7.2.6,<8",
 	"furo>=2024.1.29,<2025",
+	"pytest>=9.0.3",
 ]
 
 [tool.uv.build-backend]

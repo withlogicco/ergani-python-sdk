@@ -54,7 +54,7 @@ class ErganiClient:
             Requests exceptions may be raised for network-related errors
         """
 
-        url = f"{self.base_url}/{endpoint}"
+        url = f"{self.base_url}/{endpoint.lstrip('/')}"
         auth = ErganiAuthentication(self.username, self.password, self.base_url)
 
         response = requests.request(

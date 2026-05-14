@@ -44,11 +44,17 @@ class ErganiAuthentication(AuthBase):
 
         try:
             token = response.json()["accessToken"]
-        except ValueError as error:
-            preview = (
-                response.text.strip().splitlines()[0][:200] if response.text else ""
-            )
-            error_message = preview or "Authentication response was not valid JSON"
+        except (KeyError, TypeError, ValueError) as error:
+            error_message = extract_error_message(response)
+
+            if not error_message:
+                preview = (
+                    response.text.strip().splitlines()[0][:200] if response.text else ""
+                )
+                error_message = (
+                    preview or "Authentication response did not include an access token"
+                )
+
             raise AuthenticationError(
                 message=error_message, response=response
             ) from error

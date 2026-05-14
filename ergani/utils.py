@@ -46,10 +46,10 @@ def extract_error_message(response: Response) -> str:
 
 
 def normalize_base_url(base_url: Optional[str]) -> str:
-    if not base_url:
-        return ""
+    if not base_url or not base_url.strip():
+        raise ValueError("base_url cannot be empty")
 
-    return base_url.rstrip("/")
+    return base_url.strip().rstrip("/")
 
 
 def format_time(t: time) -> str:
