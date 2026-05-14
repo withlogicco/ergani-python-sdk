@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any, Dict, List, Optional
 
 import requests
@@ -12,6 +12,10 @@ from ergani.models import (
     CompanyWeeklySchedule,
     CompanyWorkCard,
     SubmissionResponse,
+)
+from ergani.query_models import (
+    CurrentWorkStatusEntry,
+    parse_current_work_status_entries,
 )
 from ergani.utils import extract_error_message, normalize_base_url
 
@@ -280,3 +284,20 @@ class ErganiClient:
         """
 
         return self._request("GET", "/WebServices/ServicesList", None)
+
+    def get_current_work_status(
+        self, branch_number: int, target_date: date
+    ) -> List[CurrentWorkStatusEntry]:
+        """Fetches EX_BASE_08 current work status entries for a branch and date."""
+
+        response = self._execute_service(
+            "EX_BASE_08",
+            {
+                "PararthmaAa": branch_number,
+                "Date": target_date.strftime("%d/%m/%Y"),
+            },
+        )
+        if response is None:
+            return []
+
+        return parse_current_work_status_entries(response.json())
