@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any, Dict, List, Optional
 
 import requests
@@ -13,6 +13,7 @@ from ergani.models import (
     CompanyWorkCard,
     SubmissionResponse,
 )
+from ergani.query_models import EssentialTermsAcceptanceStatus
 from ergani.utils import extract_error_message, normalize_base_url
 
 
@@ -280,3 +281,30 @@ class ErganiClient:
         """
 
         return self._request("GET", "/WebServices/ServicesList", None)
+
+    def get_essential_terms_acceptance_status(
+        self, afm: str, protocol: str, effective_date: date
+    ) -> EssentialTermsAcceptanceStatus:
+        """Fetches EX_BASE_06 essential terms acceptance status."""
+
+        parameters = {
+            "afm": afm,
+            "protocol": protocol,
+            "date": effective_date.strftime("%d/%m/%Y"),
+        }
+        response = self._execute_service("EX_BASE_06", parameters)
+
+        if response is None:
+            raise ValueError("EX_BASE_06 returned no response")
+
+        payload = response.json()
+        if isinstance(payload, list):
+            if not payload:
+                raise ValueError("EX_BASE_06 returned an empty response list")
+            status_payload = payload[0]
+        elif isinstance(payload, dict):
+            status_payload = payload
+        else:
+            raise ValueError("EX_BASE_06 response payload must be an object or list")
+
+        return EssentialTermsAcceptanceStatus.from_payload(status_payload)
