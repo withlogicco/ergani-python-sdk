@@ -94,7 +94,7 @@ class ErganiClient:
         try:
             response.raise_for_status()
             return response
-        except:
+        except requests.HTTPError:
             error_message = extract_error_message(response)
             raise APIError(message=error_message, response=response, payload=payload)
 

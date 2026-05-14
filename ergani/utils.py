@@ -1,6 +1,7 @@
 import json
 from datetime import date, datetime, time
 from typing import Optional, Union
+from urllib.parse import urlsplit, urlunsplit
 
 from requests.models import Response
 

@@ -5,7 +5,7 @@
   ],
   "service": "ergani-python-sdk",
   "workspaceFolder": "/usr/src/app",
-  "postCreateCommand": "poetry install",
+  "postCreateCommand": "uv sync",
   "features": {
     "ghcr.io/devcontainers/features/git:1": {
       "ppa": true,
@@ -15,9 +15,8 @@
   "customizations": {
     "vscode": {
       "extensions": [
+        "charliermarsh.ruff",
         "editorconfig.editorconfig",
-        "ms-python.black-formatter",
-        "ms-python.isort",
         "ms-python.python",
         "ms-python.vscode-pylance"
       ],
@@ -25,18 +24,14 @@
         "editor.formatOnPaste": true,
         "editor.formatOnSave": true,
         "editor.formatOnSaveMode": "modifications",
-        "isort.args": [
-          "--profile",
-          "black"
-        ],
-        "python.formatting.provider": "black",
         "[python]": {
-          "editor.defaultFormatter": "ms-python.black-formatter",
+          "editor.defaultFormatter": "charliermarsh.ruff",
           "editor.formatOnSave": true,
           "editor.formatOnSaveMode": "modifications",
           "editor.formatOnPaste": true,
           "editor.codeActionsOnSave": {
-            "source.organizeImports": "always"
+            "source.fixAll.ruff": "explicit",
+            "source.organizeImports.ruff": "explicit"
           }
         }
       }
