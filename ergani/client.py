@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any, Dict, List, Optional
 
 import requests
@@ -13,6 +13,7 @@ from ergani.models import (
     CompanyWorkCard,
     SubmissionResponse,
 )
+from ergani.query_models import ActualWorkLogEntry, parse_actual_work_log_entries
 from ergani.utils import extract_error_message, normalize_base_url
 
 
@@ -280,3 +281,20 @@ class ErganiClient:
         """
 
         return self._request("GET", "/WebServices/ServicesList", None)
+
+    def get_actual_work_log(
+        self, branch_number: int, target_date: date
+    ) -> List[ActualWorkLogEntry]:
+        """Fetches EX_BASE_07 actual work log entries for a branch and date."""
+
+        response = self._execute_service(
+            "EX_BASE_07",
+            {
+                "PararthmaAa": branch_number,
+                "Date": target_date.strftime("%d/%m/%Y"),
+            },
+        )
+        if response is None:
+            return []
+
+        return parse_actual_work_log_entries(response.json())
