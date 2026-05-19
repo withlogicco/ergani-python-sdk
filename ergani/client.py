@@ -11,6 +11,7 @@ from ergani.models import (
     CompanyOvertime,
     CompanyWeeklySchedule,
     CompanyWorkCard,
+    EmployerDetails,
     SubmissionResponse,
 )
 from ergani.utils import extract_error_message, normalize_base_url
@@ -54,7 +55,8 @@ class ErganiClient:
             Requests exceptions may be raised for network-related errors
         """
 
-        url = f"{self.base_url}/{endpoint.lstrip('/')}"
+        normalized_endpoint = endpoint.lstrip("/")
+        url = f"{self.base_url}/{normalized_endpoint}"
         auth = ErganiAuthentication(self.username, self.password, self.base_url)
 
         response = requests.request(
@@ -280,3 +282,28 @@ class ErganiClient:
         """
 
         return self._request("GET", "/WebServices/ServicesList", None)
+
+    def get_employer_details(self) -> EmployerDetails:
+        """
+        Fetches employer details from the Ergani API.
+
+        Returns:
+            EmployerDetails: Employer details parsed from the EX_BASE_01 response.
+
+        Raises:
+            APIError: An error occurred while communicating with the Ergani API
+            AuthenticationError: Raised if there is an authentication error with the Ergani API
+            ValueError: Raised if the query payload cannot be parsed into an employer details object
+        """
+
+        response = self._execute_service("EX_BASE_01")
+
+        if response is None:
+            return EmployerDetails.parse({})
+
+        try:
+            payload = response.json()
+        except ValueError as error:
+            raise ValueError("EX_BASE_01 returned a non-JSON response") from error
+
+        return EmployerDetails.parse(payload)

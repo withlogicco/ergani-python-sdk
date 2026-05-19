@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from datetime import date, datetime, time
-from typing import List, Literal, Optional, TypedDict
+from typing import Any, Dict, List, Literal, Optional, TypedDict
 
 from ergani.typings import (
     LateDeclarationJustificationType,
@@ -19,6 +21,76 @@ from ergani.utils import (
     get_ergani_work_type,
     get_ergani_workcard_movement_type,
 )
+
+
+@dataclass
+class EmployerDetails:
+    employer_id: int | None = None
+    employer_tax_identification_number: str | None = None
+    name: str | None = None
+    distinctive_title: str | None = None
+    employer_registry_number: str | None = None
+    is_in_card_sector: bool | None = None
+    raw_payload: Dict[str, Any] = field(default_factory=dict)
+
+    @classmethod
+    def parse(cls, payload: Any) -> EmployerDetails:
+        employer_payload = cls._parse_payload(payload)
+
+        return cls(
+            employer_id=_parse_int(employer_payload.get("Id")),
+            employer_tax_identification_number=employer_payload.get("Afm"),
+            name=employer_payload.get("Eponimia"),
+            distinctive_title=employer_payload.get("DiakritikosTitlos"),
+            employer_registry_number=employer_payload.get("Ame"),
+            is_in_card_sector=_parse_card_sector_flag(
+                employer_payload.get("IsInCardSector")
+            ),
+            raw_payload=dict(employer_payload),
+        )
+
+    @classmethod
+    def _parse_payload(cls, payload: Any) -> Dict[str, Any]:
+        if not isinstance(payload, dict):
+            raise ValueError("Expected EX_BASE_01 payload to be an object")
+
+        if "EX_BASE_01" in payload:
+            payload = payload["EX_BASE_01"]
+
+        if not isinstance(payload, dict):
+            raise ValueError("Expected EX_BASE_01 payload to contain an object")
+
+        employer_payload = payload.get("Ergodotis", payload)
+
+        if not isinstance(employer_payload, dict):
+            raise ValueError("Expected EX_BASE_01 employer payload to be an object")
+
+        return employer_payload
+
+
+def _parse_int(value: Any) -> int | None:
+    if value is None or value == "":
+        return None
+
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _parse_card_sector_flag(value: Any) -> bool | None:
+    if isinstance(value, str):
+        normalized_value = value.strip()
+        if normalized_value == "1":
+            return True
+        if normalized_value == "0":
+            return False
+
+    return None
+
+
+def parse_employer_details(payload: Any) -> EmployerDetails:
+    return EmployerDetails.parse(payload)
 
 
 @dataclass
