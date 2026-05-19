@@ -296,13 +296,12 @@ class ErganiClient:
         """
 
         response = self._execute_service("EX_BASE_02")
+        payload = None
 
-        if response is None:
-            return BusinessBranch.parse_many(None)
-
-        try:
-            payload = response.json()
-        except ValueError as error:
-            raise ValueError("EX_BASE_02 returned a non-JSON response") from error
+        if response:
+            try:
+                payload = response.json()
+            except ValueError as error:
+                raise ValueError("EX_BASE_02 returned a non-JSON response") from error
 
         return BusinessBranch.parse_many(payload)
