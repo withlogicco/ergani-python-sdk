@@ -1,28 +1,44 @@
-[tool.poetry]
+[project]
 name = "ergani"
 version = "1.0.1"
 description = "Python SDK for the Greek government's Ergani API"
-authors = ["Paris Kasidiaris <paris@withlogic.co>"]
-license = "MIT"
+authors = [
+	{ name = "Paris Kasidiaris", email = "paris@withlogic.co" },
+	{ name = "George Margaritis", email = "george@withlogic.co" },
+	{ name = "Antonis Kalipetis", email = "akalipetis@withlogic.co" },
+]
+requires-python = ">=3.10,<4"
 readme = "README.md"
+license = "MIT"
+classifiers = [
+	"Programming Language :: Python :: 3",
+	"Programming Language :: Python :: 3.10",
+	"Programming Language :: Python :: 3.11",
+	"Programming Language :: Python :: 3.12",
+	"Programming Language :: Python :: 3.13",
+	"Programming Language :: Python :: 3.14",
+]
+dependencies = ["requests>=2.31.0,<3"]
 
-[tool.poetry.dependencies]
-python = "^3.10"
-requests = "^2.31.0"
+[dependency-groups]
+dev = [
+	"mypy>=1.7.1,<2",
+	"ruff>=0.11.0,<0.12",
+	"types-requests>=2.31.0.10,<3",
+	"sphinx>=7.2.6,<8",
+	"furo>=2024.1.29,<2025",
+	"pytest>=9.0.3",
+]
 
-[tool.poetry.dev-dependencies]
-
-[tool.poetry.group.dev.dependencies]
-black = ">=23.12,<25.0"
-isort = "^5.13.2"
-mypy = "^1.7.1"
-types-requests = "^2.31.0.10"
-sphinx = "^7.2.6"
-furo = "^2024.1.29"
+[tool.uv.build-backend]
+module-root = ""
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.10.0,<0.11.0"]
+build-backend = "uv_build"
 
-[tool.isort]
-profile = "black"
+[tool.ruff]
+target-version = "py310"
+
+[tool.ruff.lint]
+extend-select = ["I"]

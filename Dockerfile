@@ -1,8 +1,8 @@
-FROM ghcr.io/withlogicco/poetry:1.7.1-python-3.12
+FROM ghcr.io/withlogicco/python:3.13
 
 WORKDIR /usr/src/app
-COPY pyproject.toml poetry.lock README.md ./
-RUN poetry check && poetry lock --check
-RUN poetry install
+COPY pyproject.toml uv.lock README.md ./
+RUN uv sync --locked --no-install-project
 
 COPY ./ ./
+RUN uv sync --locked

@@ -13,7 +13,7 @@ from ergani.models import (
     CompanyWorkCard,
     SubmissionResponse,
 )
-from ergani.utils import extract_error_message
+from ergani.utils import extract_error_message, normalize_base_url
 
 
 class ErganiClient:
@@ -34,7 +34,7 @@ class ErganiClient:
     ) -> None:
         self.username = username
         self.password = password
-        self.base_url = base_url
+        self.base_url = normalize_base_url(base_url)
 
     def _request(
         self, method: str, endpoint: str, payload: Optional[Dict[str, Any]] = None
@@ -54,7 +54,7 @@ class ErganiClient:
             Requests exceptions may be raised for network-related errors
         """
 
-        url = f"{self.base_url}/{endpoint}"
+        url = f"{self.base_url}/{endpoint.lstrip('/')}"
         auth = ErganiAuthentication(self.username, self.password, self.base_url)
 
         response = requests.request(
@@ -94,9 +94,22 @@ class ErganiClient:
         try:
             response.raise_for_status()
             return response
-        except:
+        except requests.HTTPError:
             error_message = extract_error_message(response)
             raise APIError(message=error_message, response=response, payload=payload)
+
+    def _execute_service(
+        self, service_code: str, parameters: Optional[Dict[str, Any]] = None
+    ) -> Optional[Response]:
+        request_payload = {
+            "ServiceCode": service_code,
+            "Parameters": [
+                {"ParameterName": name, "ParameterValue": value}
+                for name, value in (parameters or {}).items()
+            ],
+        }
+
+        return self._request("POST", "/WebServices/ExecuteService", request_payload)
 
     def _extract_submission_result(
         self, response: Optional[Response]
@@ -253,3 +266,17 @@ class ErganiClient:
         response = self._request("POST", endpoint, request_payload)
 
         return self._extract_submission_result(response)
+
+    def get_services_list(self) -> Optional[Response]:
+        """
+        Fetches the available services list from the Ergani API.
+
+        Returns:
+            Optional[Response]: The raw response returned by the services list endpoint.
+
+        Raises:
+            APIError: An error occurred while communicating with the Ergani API
+            AuthenticationError: Raised if there is an authentication error with the Ergani API
+        """
+
+        return self._request("GET", "/WebServices/ServicesList", None)

@@ -6,14 +6,15 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.1
-      - run: pipx install poetry==1.7.1
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v8.1.0
         with:
-          python-version: "3.12"
-          cache: "poetry"
-      - run: poetry check
-      - run: poetry lock --check
-      - run: poetry install
-      - run: poetry run black --check .
-      - run: poetry run isort --check .
+          enable-cache: true
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: uv lock --check
+      - run: uv sync --locked --dev
+      - run: uv run pytest
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
