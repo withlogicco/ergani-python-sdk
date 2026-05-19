@@ -32,7 +32,7 @@ BRANCH_RAW_PAYLOAD = {
 
 
 class BusinessBranchTests(TestCase):
-    def test_business_branch_parse_reads_wrapped_response(self):
+    def test_business_branch_parse_reads_wrapped_response(self) -> None:
         self.assertEqual(
             BusinessBranch.parse(BRANCH_PAYLOAD),
             BusinessBranch(
@@ -47,11 +47,11 @@ class BusinessBranchTests(TestCase):
             ),
         )
 
-    def test_business_branch_parse_requires_object_payload(self):
+    def test_business_branch_parse_requires_object_payload(self) -> None:
         with self.assertRaises(ValueError):
             BusinessBranch.parse("invalid")
 
-    def test_get_branch_details_uses_execute_service_and_parses_wrapped_response(self):
+    def test_get_branch_details_uses_execute_service_and_parses_wrapped_response(self) -> None:
         client = ErganiClient("username", "password", "https://example.test")
         response = Mock(spec=Response)
         response.json.return_value = BRANCH_PAYLOAD
@@ -78,7 +78,7 @@ class BusinessBranchTests(TestCase):
         )
         execute_service_mock.assert_called_once_with("EX_BASE_02")
 
-    def test_get_branch_details_returns_empty_list_for_no_content(self):
+    def test_get_branch_details_returns_empty_list_for_no_content(self) -> None:
         client = ErganiClient("username", "password", "https://example.test")
 
         with patch.object(
