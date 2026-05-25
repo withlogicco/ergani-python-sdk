@@ -50,18 +50,19 @@ class BusinessBranch:
     raw_payload: Dict[str, Any]
 
     @classmethod
-    def parse(cls, payload: Any) -> BusinessBranch:
-        branch_payload = cls._parse_payload(payload)
+    def parse(cls, payload: Dict[str, Any]) -> BusinessBranch:
+        if not isinstance(payload, dict):
+            raise ValueError("Expected EX_BASE_02 branch payload to be an object")
 
         return cls(
-            branch_number=_parse_int(branch_payload.get("Aa")),
-            address=branch_payload.get("Address"),
-            sepe_service_code=branch_payload.get("YpiresiaSepe"),
-            oaed_service_code=branch_payload.get("YpiresiaOaed"),
-            business_branch_activity_code=branch_payload.get("Kad"),
-            kallikratis_municipal_code=branch_payload.get("Kallikratis"),
-            status_description=branch_payload.get("StatusDescription"),
-            raw_payload=dict(branch_payload),
+            branch_number=_parse_int(payload.get("Aa")),
+            address=payload.get("Address"),
+            sepe_service_code=payload.get("YpiresiaSepe"),
+            oaed_service_code=payload.get("YpiresiaOaed"),
+            business_branch_activity_code=payload.get("Kad"),
+            kallikratis_municipal_code=payload.get("Kallikratis"),
+            status_description=payload.get("StatusDescription"),
+            raw_payload=payload,
         )
 
     @classmethod
@@ -69,10 +70,18 @@ class BusinessBranch:
         if payload is None:
             return []
 
-        return [cls.parse(payload)]
+        branch_payload = cls._unwrap_payload(payload)
 
-    @classmethod
-    def _parse_payload(cls, payload: Any) -> Dict[str, Any]:
+        if isinstance(branch_payload, dict):
+            return [cls.parse(branch_payload)]
+
+        if not isinstance(branch_payload, list):
+            raise ValueError("Expected EX_BASE_02 branch payload to be an object or list")
+
+        return [cls.parse(item) for item in branch_payload]
+
+    @staticmethod
+    def _unwrap_payload(payload: Any) -> Any:
         if not isinstance(payload, dict):
             raise ValueError("Expected EX_BASE_02 payload to be an object")
 
@@ -83,9 +92,6 @@ class BusinessBranch:
             raise ValueError("Expected EX_BASE_02 payload to contain an object")
 
         branch_payload = payload.get("Pararthma", payload)
-
-        if not isinstance(branch_payload, dict):
-            raise ValueError("Expected EX_BASE_02 branch payload to be an object")
 
         return branch_payload
 
