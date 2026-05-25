@@ -76,7 +76,9 @@ class BusinessBranch:
             return [cls.parse(branch_payload)]
 
         if not isinstance(branch_payload, list):
-            raise ValueError("Expected EX_BASE_02 branch payload to be an object or list")
+            raise ValueError(
+                "Expected EX_BASE_02 branch payload to be an object or list"
+            )
 
         return [cls.parse(item) for item in branch_payload]
 

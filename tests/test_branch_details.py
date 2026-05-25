@@ -102,7 +102,9 @@ class BusinessBranchTests(TestCase):
 
     def test_business_branch_parse_many_accepts_single_branch_payload(self) -> None:
         self.assertEqual(
-            BusinessBranch.parse_many({"EX_BASE_02": {"Pararthma": SINGLE_BRANCH_PAYLOAD}}),
+            BusinessBranch.parse_many(
+                {"EX_BASE_02": {"Pararthma": SINGLE_BRANCH_PAYLOAD}}
+            ),
             [
                 BusinessBranch(
                     branch_number=0,
@@ -117,7 +119,9 @@ class BusinessBranchTests(TestCase):
             ],
         )
 
-    def test_get_branch_details_uses_execute_service_and_parses_wrapped_response(self) -> None:
+    def test_get_branch_details_uses_execute_service_and_parses_wrapped_response(
+        self,
+    ) -> None:
         client = ErganiClient("username", "password", "https://example.test")
         response = Mock(spec=Response)
         response.json.return_value = BRANCH_PAYLOAD
