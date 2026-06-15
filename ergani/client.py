@@ -353,6 +353,7 @@ class ErganiClient:
         Raises:
             APIError: An error occurred while communicating with the Ergani API
             AuthenticationError: Raised if there is an authentication error with the Ergani API
+            ValueError: Raised if the response payload could not be parsed as JSON
         """
 
         parameters = CurrentWorkforceRequest(afm=afm).serialize()
@@ -361,6 +362,9 @@ class ErganiClient:
         if not response:
             return CurrentWorkforceRecord.parse_many(None)
 
-        payload = response.json()
+        try:
+            payload = response.json()
+        except ValueError as error:
+            raise ValueError("EX_BASE_05 returned a non-JSON response") from error
 
         return CurrentWorkforceRecord.parse_many(payload)
