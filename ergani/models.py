@@ -233,6 +233,151 @@ def _parse_int(value: Any) -> int | None:
 
 
 @dataclass
+class BusinessBranch:
+    """
+    Represents a business branch returned by the Ergani query services.
+
+    Attributes:
+        branch_number (Optional[int]): The verified branch identifier used by later
+            query endpoints when present in the payload.
+        address (Optional[str]): The branch address when returned by EX_BASE_02.
+        sepe_service_code (Optional[str]): The SEPE service code for the branch.
+        oaed_service_code (Optional[str]): The OAED service code for the branch.
+        business_branch_activity_code (Optional[str]): The branch activity code.
+        kallikratis_municipal_code (Optional[str]): The Kallikratis municipal code.
+        status_description (Optional[str]): The current branch status description.
+        raw_payload (Dict[str, Any]): The raw branch payload returned by the API.
+    """
+
+    branch_number: Optional[int]
+    address: Optional[str]
+    sepe_service_code: Optional[str]
+    oaed_service_code: Optional[str]
+    business_branch_activity_code: Optional[str]
+    kallikratis_municipal_code: Optional[str]
+    status_description: Optional[str]
+    raw_payload: Dict[str, Any]
+
+    @classmethod
+    def parse(cls, payload: Dict[str, Any]) -> BusinessBranch:
+        if not isinstance(payload, dict):
+            raise ValueError("Expected EX_BASE_02 branch payload to be an object")
+
+        return cls(
+            branch_number=_parse_int(payload.get("Aa")),
+            address=payload.get("Address"),
+            sepe_service_code=payload.get("YpiresiaSepe"),
+            oaed_service_code=payload.get("YpiresiaOaed"),
+            business_branch_activity_code=payload.get("Kad"),
+            kallikratis_municipal_code=payload.get("Kallikratis"),
+            status_description=payload.get("StatusDescription"),
+            raw_payload=payload,
+        )
+
+    @classmethod
+    def parse_many(cls, payload: Any) -> List[BusinessBranch]:
+        if payload is None:
+            return []
+
+        branch_payload = cls._unwrap_payload(payload)
+
+        if isinstance(branch_payload, dict):
+            return [cls.parse(branch_payload)]
+
+        if not isinstance(branch_payload, list):
+            raise ValueError(
+                "Expected EX_BASE_02 branch payload to be an object or list"
+            )
+
+        return [cls.parse(item) for item in branch_payload]
+
+    @staticmethod
+    def _unwrap_payload(payload: Any) -> Any:
+        if not isinstance(payload, dict):
+            raise ValueError("Expected EX_BASE_02 payload to be an object")
+
+        if "EX_BASE_02" in payload:
+            payload = payload["EX_BASE_02"]
+
+        if not isinstance(payload, dict):
+            raise ValueError("Expected EX_BASE_02 payload to contain an object")
+
+        branch_payload = payload.get("Pararthma", payload)
+
+        return branch_payload
+
+
+@dataclass
+class EmployerDetails:
+    employer_id: int | None = None
+    employer_tax_identification_number: str | None = None
+    name: str | None = None
+    distinctive_title: str | None = None
+    employer_registry_number: str | None = None
+    is_in_card_sector: bool | None = None
+    raw_payload: Dict[str, Any] = field(default_factory=dict)
+
+    @classmethod
+    def parse(cls, payload: Any) -> EmployerDetails:
+        employer_payload = cls._parse_payload(payload)
+
+        return cls(
+            employer_id=_parse_int(employer_payload.get("Id")),
+            employer_tax_identification_number=employer_payload.get("Afm"),
+            name=employer_payload.get("Eponimia"),
+            distinctive_title=employer_payload.get("DiakritikosTitlos"),
+            employer_registry_number=employer_payload.get("Ame"),
+            is_in_card_sector=_parse_card_sector_flag(
+                employer_payload.get("IsInCardSector")
+            ),
+            raw_payload=dict(employer_payload),
+        )
+
+    @classmethod
+    def _parse_payload(cls, payload: Any) -> Dict[str, Any]:
+        if not isinstance(payload, dict):
+            raise ValueError("Expected EX_BASE_01 payload to be an object")
+
+        if "EX_BASE_01" in payload:
+            payload = payload["EX_BASE_01"]
+
+        if not isinstance(payload, dict):
+            raise ValueError("Expected EX_BASE_01 payload to contain an object")
+
+        employer_payload = payload.get("Ergodotis", payload)
+
+        if not isinstance(employer_payload, dict):
+            raise ValueError("Expected EX_BASE_01 employer payload to be an object")
+
+        return employer_payload
+
+
+def _parse_int(value: Any) -> Optional[int]:
+    if value is None or value == "":
+        return None
+
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _parse_card_sector_flag(value: Any) -> bool | None:
+    if isinstance(value, str):
+        normalized_value = value.strip()
+        if normalized_value == "1":
+            return True
+        if normalized_value == "0":
+            return False
+
+    return None
+
+
+def parse_employer_details(payload: Any) -> EmployerDetails:
+    return EmployerDetails.parse(payload)
+
+
+@dataclass
 class WorkCard:
     """
     Represents a work card entry for an employee
