@@ -1,0 +1,367 @@
+from unittest import TestCase
+from unittest.mock import Mock, patch
+
+from requests.models import Response
+
+from ergani.client import ErganiClient
+from ergani.models import CurrentWorkforceRecord, CurrentWorkforceRequest
+
+CURRENT_WORKFORCE_PAYLOAD = {
+    "EX_BASE_05": {
+        "Cur": [
+            {
+                "afm": "000000001",
+                "Eponimo": "ΠΑΠΑΔΟΠΟΥΛΟΥ",
+                "Onoma": "ΑΝΝΑ",
+                "OnomaPatera": "ΝΙΚΟΣ",
+                "OnomaMiteras": "ΕΛΕΝΗ",
+                "BirthDate": "1991-03-07T00:00:00+02:00",
+                "Sex": "ΓΥΝΑΙΚΑ (1)",
+                "Nationality": "048-ΕΛΛΑΔΑ",
+                "MaritalStatus": "ΑΓΑΜΟΣ/Η (0)",
+                "NumChildren": "0",
+                "Doy": "1152-ΒΥΡΩΝΑ",
+                "CodeAnergias": None,
+                "AmIka": "000000001",
+                "Amka": "00000000001",
+                "Dieythinsi": "ΟΔΟΣ ΔΟΚΙΜΗΣ 1 ΑΘΗΝΑ",
+                "Tk": "16121",
+                "Tilefwno": "2100000000",
+                "ArVivliouAnilikou": None,
+                "TyposTaytotitas": "ΔAT-ΔΕΛΤΙΟ ΑΣΤΥΝΟΜΙΚΗΣ ΤΑΥΤΟΤΗΤΑΣ",
+                "ArTaytotitas": "ΑΑ000001",
+                "EkdousaArxi": "Α.Τ. ΑΘΗΝΩΝ",
+                "DateEkdosis": "2009-07-10T00:00:00+03:00",
+                "ResPermitInst": "ΟΧΙ (0)",
+                "ResPermitInstAr": None,
+                "ResPermitAp": "ΟΧΙ (0)",
+                "ResPermitApAr": None,
+                "ResPermitVisa": "ΟΧΙ (0)",
+                "ResPermitVisaAr": None,
+                "PararthmaAa": "0",
+                "DateFrom": "2021-07-01T00:00:00+03:00",
+                "Eidikothta": "ΑΝΑΛΥΤΕΣ ΣΥΣΤΗΜΑΤΩΝ",
+                "asXaraktirismos": "ΥΠΑΛΛΗΛΟΣ (1)",
+                "Step": "213100-ΑΝΑΛΥΤΕΣ ΣΥΣΤΗΜΑΤΩΝ",
+                "WeekDays": "5-ΗΜΕΡΗ (5)",
+                "Proipiresia": "0",
+                "SxesiApasxolisis": "ΑΟΡΙΣΤΟΥ ΧΡΟΝΟΥ (0)",
+                "ResponsiblePosition": "ΟΧΙ (1)",
+                "KathestosApasxolisis": "ΠΛΗΡΗΣ (0)",
+                "WeekHours": "40.0",
+                "Orario": "ΨΗΦΙΑΚΗ ΟΡΓΑΝΩΣΗ ΧΡΟΝΟΥ ΕΡΓΑΣΙΑΣ",
+                "Dialeimma": "ΨΗΦΙΑΚΗ ΟΡΓΑΝΩΣΗ ΧΡΟΝΟΥ ΕΡΓΑΣΙΑΣ",
+                "ToposErgasias": "ΠΑΡΑΡΤΗΜΑ ΕΡΓΟΔΟΤΗ (0)",
+                "ToposErgasiasComments": None,
+                "XronosKatabolisApodoxwn": "ΤΕΛΟΣ ΚΑΘΕ ΜΗΝΑ",
+                "MhProblepsimoProgrammaErgasias": "ΟΧΙ (0)",
+                "ParaggeliaHmeresHours": None,
+                "ParaggeliaMinNotification": None,
+                "ParaggeliaNotes": None,
+                "IpoxreotikiKatartisi": "ΟΧΙ (0)",
+                "EfarmosteaSyllogikiSymbasi": "ΟΧΙ (0)",
+                "EfarmosteaSyllogikiSymbasiComments": None,
+                "Dieythetisi": "ΟΧΙ (2)",
+                "DieythetisiComments": None,
+                "Apodoxes": "1000.00",
+                "HourApodoxes": "10.00",
+                "KyriaAsfalisi": "001-ΗΛΕΚΤΡΟΝΙΚΟΣ ΕΘΝΙΚΟΣ ΦΟΡΕΑΣ ΚΟΙΝΩΝΙΚΗΣ ΑΣΦΑΛΙΣΗΣ (e-ΕΦΚΑ)",
+                "EpikourikiAsfalisi": "001-ΚΛΑΔΟΣ ΕΠΙΚΟΥΡΙΚΗΣ ΑΣΦΑΛΙΣΗΣ e-ΕΦΚΑ",
+                "ProsthetesAsfalistikesParoxes": None,
+                "TrialPeriod": "ΟΧΙ (0)",
+                "BorrowCompanyAfm": None,
+                "DateMetabolhs": "2026-05-01T00:00:00+03:00",
+                "EpipedoMorfosis": "11-ΑΕΙ",
+                "ProfessionalEducation": "ΟΧΙ (0)",
+                "Pc": "ΝΑΙ (1)",
+                "WorkingTimeDigitalOrganization": "ΝΑΙ (1)",
+                "FullEmploymentHours": "40.0",
+                "DialeimmaMinutes": "20",
+                "DialeimmaEntosWrariou": "ΝΑΙ (1)",
+                "WorkingCard": "ΟΧΙ (0)",
+                "EueliktoWrario": "0",
+                "LastModifiedDate": "2026-05-01T00:00:00+03:00",
+            },
+            {
+                "afm": "000000002",
+                "Eponimo": "ΔΗΜΗΤΡΙΟΥ",
+                "Onoma": "ΓΙΩΡΓΟΣ",
+                "OnomaPatera": "ΣΤΑΥΡΟΣ",
+                "OnomaMiteras": "ΜΑΡΙΑ",
+                "BirthDate": "1996-09-09T00:00:00+03:00",
+                "Sex": "ΑΝΔΡΑΣ (0)",
+                "Nationality": "048-ΕΛΛΑΔΑ",
+                "MaritalStatus": "ΑΓΑΜΟΣ/Η (0)",
+                "NumChildren": "0",
+                "Doy": "3231-Α ΛΑΡΙΣΑΣ",
+                "CodeAnergias": None,
+                "AmIka": "000000002",
+                "Amka": "00000000002",
+                "Dieythinsi": "ΟΔΟΣ ΔΟΚΙΜΗΣ 2 ΛΑΡΙΣΑ",
+                "Tk": "41335",
+                "Tilefwno": "2410000000",
+                "Kallikratis": "91000301-1ο ΔΙΑΜΕΡΙΣΜΑ ΛΑΡΙΣΗΣ",
+                "ArVivliouAnilikou": None,
+                "TyposTaytotitas": "ΔAT-ΔΕΛΤΙΟ ΑΣΤΥΝΟΜΙΚΗΣ ΤΑΥΤΟΤΗΤΑΣ",
+                "ArTaytotitas": "ΑΑ000002",
+                "EkdousaArxi": "Υ.Α. ΛΑΡΙΣΑΣ",
+                "DateEkdosis": "2011-04-26T00:00:00+03:00",
+                "ResPermitInst": "ΟΧΙ (0)",
+                "ResPermitInstAr": None,
+                "ResPermitAp": "ΟΧΙ (0)",
+                "ResPermitApAr": None,
+                "ResPermitVisa": "ΟΧΙ (0)",
+                "ResPermitVisaAr": None,
+                "PararthmaAa": "0",
+                "DateFrom": "2022-06-01T00:00:00+03:00",
+                "Eidikothta": "ΑΝΑΛΥΤΕΣ ΣΥΣΤΗΜΑΤΩΝ",
+                "asXaraktirismos": "ΥΠΑΛΛΗΛΟΣ (1)",
+                "Step": "213100-ΑΝΑΛΥΤΕΣ ΣΥΣΤΗΜΑΤΩΝ",
+                "WeekDays": "5-ΗΜΕΡΗ (5)",
+                "Proipiresia": "0",
+                "SxesiApasxolisis": "ΑΟΡΙΣΤΟΥ ΧΡΟΝΟΥ (0)",
+                "ResponsiblePosition": "ΟΧΙ (1)",
+                "KathestosApasxolisis": "ΠΛΗΡΗΣ (0)",
+                "WeekHours": "40.0",
+                "Orario": "ΨΗΦΙΑΚΗ ΟΡΓΑΝΩΣΗ ΧΡΟΝΟΥ ΕΡΓΑΣΙΑΣ",
+                "Dialeimma": "ΨΗΦΙΑΚΗ ΟΡΓΑΝΩΣΗ ΧΡΟΝΟΥ ΕΡΓΑΣΙΑΣ",
+                "ToposErgasias": "ΠΑΡΑΡΤΗΜΑ ΕΡΓΟΔΟΤΗ (0)",
+                "ToposErgasiasComments": None,
+                "XronosKatabolisApodoxwn": "ΤΕΛΟΣ ΚΑΘΕ ΜΗΝΑ",
+                "MhProblepsimoProgrammaErgasias": "ΟΧΙ (0)",
+                "ParaggeliaHmeresHours": None,
+                "ParaggeliaMinNotification": None,
+                "ParaggeliaNotes": None,
+                "IpoxreotikiKatartisi": "ΟΧΙ (0)",
+                "EfarmosteaSyllogikiSymbasi": "ΟΧΙ (0)",
+                "EfarmosteaSyllogikiSymbasiComments": None,
+                "Dieythetisi": "ΟΧΙ (2)",
+                "DieythetisiComments": None,
+                "Apodoxes": "1100.00",
+                "HourApodoxes": "11.00",
+                "KyriaAsfalisi": "001-ΗΛΕΚΤΡΟΝΙΚΟΣ ΕΘΝΙΚΟΣ ΦΟΡΕΑΣ ΚΟΙΝΩΝΙΚΗΣ ΑΣΦΑΛΙΣΗΣ (e-ΕΦΚΑ)",
+                "EpikourikiAsfalisi": "002-ΤΑΜΕΙΟ ΕΠΙΚΟΥΡΙΚΗΣ ΚΕΦΑΛΑΙΟΠΟΙΗΤΙΚΗΣ ΑΣΦΑΛΙΣΗΣ (ΤΕΚΑ)",
+                "ProsthetesAsfalistikesParoxes": None,
+                "TrialPeriod": "ΟΧΙ (0)",
+                "BorrowCompanyAfm": None,
+                "DateMetabolhs": "2026-05-01T00:00:00+03:00",
+                "EpipedoMorfosis": "11-ΑΕΙ",
+                "ProfessionalEducation": "ΟΧΙ (0)",
+                "Pc": "ΝΑΙ (1)",
+                "WorkingTimeDigitalOrganization": "ΝΑΙ (1)",
+                "FullEmploymentHours": "40.0",
+                "DialeimmaMinutes": "20",
+                "DialeimmaEntosWrariou": "ΝΑΙ (1)",
+                "WorkingCard": "ΟΧΙ (0)",
+                "EueliktoWrario": "0",
+                "LastModifiedDate": "2026-05-01T00:00:00+03:00",
+            },
+        ]
+    }
+}
+
+
+class CurrentWorkforceTests(TestCase):
+    def test_current_workforce_request_omits_none_and_preserves_empty_string(self):
+        self.assertEqual(CurrentWorkforceRequest().serialize(), {})
+        self.assertEqual(CurrentWorkforceRequest(afm="").serialize(), {"afm": ""})
+
+    def test_current_workforce_record_parse_many_reads_wrapped_response(self):
+        self.assertEqual(
+            CurrentWorkforceRecord.parse_many(CURRENT_WORKFORCE_PAYLOAD),
+            [
+                CurrentWorkforceRecord(
+                    employee_tax_identification_number="000000001",
+                    employee_last_name="ΠΑΠΑΔΟΠΟΥΛΟΥ",
+                    employee_first_name="ΑΝΝΑ",
+                    employee_father_first_name="ΝΙΚΟΣ",
+                    employee_mother_first_name="ΕΛΕΝΗ",
+                    birth_date="1991-03-07T00:00:00+02:00",
+                    sex="ΓΥΝΑΙΚΑ (1)",
+                    nationality="048-ΕΛΛΑΔΑ",
+                    marital_status="ΑΓΑΜΟΣ/Η (0)",
+                    number_of_children=0,
+                    tax_office="1152-ΒΥΡΩΝΑ",
+                    unemployment_card_code=None,
+                    social_security_registry_number="000000001",
+                    social_security_number="00000000001",
+                    address="ΟΔΟΣ ΔΟΚΙΜΗΣ 1 ΑΘΗΝΑ",
+                    postal_code="16121",
+                    phone_number="2100000000",
+                    kallikratis_municipal_code=None,
+                    underage_work_book_number=None,
+                    identity_document_type="ΔAT-ΔΕΛΤΙΟ ΑΣΤΥΝΟΜΙΚΗΣ ΤΑΥΤΟΤΗΤΑΣ",
+                    identity_document_number="ΑΑ000001",
+                    identity_document_issuing_authority="Α.Τ. ΑΘΗΝΩΝ",
+                    identity_document_issue_date="2009-07-10T00:00:00+03:00",
+                    residence_permit_installment="ΟΧΙ (0)",
+                    residence_permit_installment_number=None,
+                    residence_permit_approval="ΟΧΙ (0)",
+                    residence_permit_approval_number=None,
+                    residence_permit_visa="ΟΧΙ (0)",
+                    residence_permit_visa_number=None,
+                    branch_number=0,
+                    employment_start_date="2021-07-01T00:00:00+03:00",
+                    specialty="ΑΝΑΛΥΤΕΣ ΣΥΣΤΗΜΑΤΩΝ",
+                    employee_classification="ΥΠΑΛΛΗΛΟΣ (1)",
+                    profession_code="213100-ΑΝΑΛΥΤΕΣ ΣΥΣΤΗΜΑΤΩΝ",
+                    weekly_workdays="5-ΗΜΕΡΗ (5)",
+                    prior_experience="0",
+                    employment_relationship="ΑΟΡΙΣΤΟΥ ΧΡΟΝΟΥ (0)",
+                    responsible_position="ΟΧΙ (1)",
+                    employment_status="ΠΛΗΡΗΣ (0)",
+                    weekly_hours="40.0",
+                    working_schedule="ΨΗΦΙΑΚΗ ΟΡΓΑΝΩΣΗ ΧΡΟΝΟΥ ΕΡΓΑΣΙΑΣ",
+                    break_schedule="ΨΗΦΙΑΚΗ ΟΡΓΑΝΩΣΗ ΧΡΟΝΟΥ ΕΡΓΑΣΙΑΣ",
+                    workplace="ΠΑΡΑΡΤΗΜΑ ΕΡΓΟΔΟΤΗ (0)",
+                    workplace_comments=None,
+                    wage_payment_frequency="ΤΕΛΟΣ ΚΑΘΕ ΜΗΝΑ",
+                    unpredictable_work_schedule="ΟΧΙ (0)",
+                    on_demand_days_and_hours=None,
+                    on_demand_minimum_notification=None,
+                    on_demand_notes=None,
+                    mandatory_training="ΟΧΙ (0)",
+                    applicable_collective_agreement="ΟΧΙ (0)",
+                    applicable_collective_agreement_comments=None,
+                    working_time_arrangement="ΟΧΙ (2)",
+                    working_time_arrangement_comments=None,
+                    gross_pay="1000.00",
+                    hourly_pay="10.00",
+                    primary_insurance="001-ΗΛΕΚΤΡΟΝΙΚΟΣ ΕΘΝΙΚΟΣ ΦΟΡΕΑΣ ΚΟΙΝΩΝΙΚΗΣ ΑΣΦΑΛΙΣΗΣ (e-ΕΦΚΑ)",
+                    supplementary_insurance="001-ΚΛΑΔΟΣ ΕΠΙΚΟΥΡΙΚΗΣ ΑΣΦΑΛΙΣΗΣ e-ΕΦΚΑ",
+                    additional_insurance_benefits=None,
+                    trial_period="ΟΧΙ (0)",
+                    borrowing_company_tax_identification_number=None,
+                    change_date="2026-05-01T00:00:00+03:00",
+                    education_level="11-ΑΕΙ",
+                    professional_education="ΟΧΙ (0)",
+                    pc_provided="ΝΑΙ (1)",
+                    working_time_digital_organization="ΝΑΙ (1)",
+                    full_employment_hours="40.0",
+                    break_minutes=20,
+                    break_within_schedule="ΝΑΙ (1)",
+                    working_card="ΟΧΙ (0)",
+                    flexible_working_hours="0",
+                    last_modified_date="2026-05-01T00:00:00+03:00",
+                    raw_payload=CURRENT_WORKFORCE_PAYLOAD["EX_BASE_05"]["Cur"][0],
+                ),
+                CurrentWorkforceRecord(
+                    employee_tax_identification_number="000000002",
+                    employee_last_name="ΔΗΜΗΤΡΙΟΥ",
+                    employee_first_name="ΓΙΩΡΓΟΣ",
+                    employee_father_first_name="ΣΤΑΥΡΟΣ",
+                    employee_mother_first_name="ΜΑΡΙΑ",
+                    birth_date="1996-09-09T00:00:00+03:00",
+                    sex="ΑΝΔΡΑΣ (0)",
+                    nationality="048-ΕΛΛΑΔΑ",
+                    marital_status="ΑΓΑΜΟΣ/Η (0)",
+                    number_of_children=0,
+                    tax_office="3231-Α ΛΑΡΙΣΑΣ",
+                    unemployment_card_code=None,
+                    social_security_registry_number="000000002",
+                    social_security_number="00000000002",
+                    address="ΟΔΟΣ ΔΟΚΙΜΗΣ 2 ΛΑΡΙΣΑ",
+                    postal_code="41335",
+                    phone_number="2410000000",
+                    kallikratis_municipal_code="91000301-1ο ΔΙΑΜΕΡΙΣΜΑ ΛΑΡΙΣΗΣ",
+                    underage_work_book_number=None,
+                    identity_document_type="ΔAT-ΔΕΛΤΙΟ ΑΣΤΥΝΟΜΙΚΗΣ ΤΑΥΤΟΤΗΤΑΣ",
+                    identity_document_number="ΑΑ000002",
+                    identity_document_issuing_authority="Υ.Α. ΛΑΡΙΣΑΣ",
+                    identity_document_issue_date="2011-04-26T00:00:00+03:00",
+                    residence_permit_installment="ΟΧΙ (0)",
+                    residence_permit_installment_number=None,
+                    residence_permit_approval="ΟΧΙ (0)",
+                    residence_permit_approval_number=None,
+                    residence_permit_visa="ΟΧΙ (0)",
+                    residence_permit_visa_number=None,
+                    branch_number=0,
+                    employment_start_date="2022-06-01T00:00:00+03:00",
+                    specialty="ΑΝΑΛΥΤΕΣ ΣΥΣΤΗΜΑΤΩΝ",
+                    employee_classification="ΥΠΑΛΛΗΛΟΣ (1)",
+                    profession_code="213100-ΑΝΑΛΥΤΕΣ ΣΥΣΤΗΜΑΤΩΝ",
+                    weekly_workdays="5-ΗΜΕΡΗ (5)",
+                    prior_experience="0",
+                    employment_relationship="ΑΟΡΙΣΤΟΥ ΧΡΟΝΟΥ (0)",
+                    responsible_position="ΟΧΙ (1)",
+                    employment_status="ΠΛΗΡΗΣ (0)",
+                    weekly_hours="40.0",
+                    working_schedule="ΨΗΦΙΑΚΗ ΟΡΓΑΝΩΣΗ ΧΡΟΝΟΥ ΕΡΓΑΣΙΑΣ",
+                    break_schedule="ΨΗΦΙΑΚΗ ΟΡΓΑΝΩΣΗ ΧΡΟΝΟΥ ΕΡΓΑΣΙΑΣ",
+                    workplace="ΠΑΡΑΡΤΗΜΑ ΕΡΓΟΔΟΤΗ (0)",
+                    workplace_comments=None,
+                    wage_payment_frequency="ΤΕΛΟΣ ΚΑΘΕ ΜΗΝΑ",
+                    unpredictable_work_schedule="ΟΧΙ (0)",
+                    on_demand_days_and_hours=None,
+                    on_demand_minimum_notification=None,
+                    on_demand_notes=None,
+                    mandatory_training="ΟΧΙ (0)",
+                    applicable_collective_agreement="ΟΧΙ (0)",
+                    applicable_collective_agreement_comments=None,
+                    working_time_arrangement="ΟΧΙ (2)",
+                    working_time_arrangement_comments=None,
+                    gross_pay="1100.00",
+                    hourly_pay="11.00",
+                    primary_insurance="001-ΗΛΕΚΤΡΟΝΙΚΟΣ ΕΘΝΙΚΟΣ ΦΟΡΕΑΣ ΚΟΙΝΩΝΙΚΗΣ ΑΣΦΑΛΙΣΗΣ (e-ΕΦΚΑ)",
+                    supplementary_insurance="002-ΤΑΜΕΙΟ ΕΠΙΚΟΥΡΙΚΗΣ ΚΕΦΑΛΑΙΟΠΟΙΗΤΙΚΗΣ ΑΣΦΑΛΙΣΗΣ (ΤΕΚΑ)",
+                    additional_insurance_benefits=None,
+                    trial_period="ΟΧΙ (0)",
+                    borrowing_company_tax_identification_number=None,
+                    change_date="2026-05-01T00:00:00+03:00",
+                    education_level="11-ΑΕΙ",
+                    professional_education="ΟΧΙ (0)",
+                    pc_provided="ΝΑΙ (1)",
+                    working_time_digital_organization="ΝΑΙ (1)",
+                    full_employment_hours="40.0",
+                    break_minutes=20,
+                    break_within_schedule="ΝΑΙ (1)",
+                    working_card="ΟΧΙ (0)",
+                    flexible_working_hours="0",
+                    last_modified_date="2026-05-01T00:00:00+03:00",
+                    raw_payload=CURRENT_WORKFORCE_PAYLOAD["EX_BASE_05"]["Cur"][1],
+                ),
+            ],
+        )
+
+    def test_current_workforce_record_parse_many_requires_list_payload(self):
+        with self.assertRaisesRegex(ValueError, "payload to be a list"):
+            CurrentWorkforceRecord.parse_many({"EX_BASE_05": {"Cur": {}}})
+
+    def test_get_current_workforce_uses_afm_filter_and_parses_wrapped_response(self):
+        client = ErganiClient("username", "password", "https://example.test")
+        response = Mock(spec=Response)
+        response.json.return_value = CURRENT_WORKFORCE_PAYLOAD
+
+        with patch.object(
+            client, "_execute_service", return_value=response
+        ) as execute_service_mock:
+            result = client.get_current_workforce(afm="000000001")
+
+        self.assertEqual(
+            result, CurrentWorkforceRecord.parse_many(CURRENT_WORKFORCE_PAYLOAD)
+        )
+        execute_service_mock.assert_called_once_with("EX_BASE_05", {"afm": "000000001"})
+
+    def test_get_current_workforce_preserves_empty_string_filter(self):
+        client = ErganiClient("username", "password", "https://example.test")
+        response = Mock(spec=Response)
+        response.json.return_value = {"EX_BASE_05": {"Cur": []}}
+
+        with patch.object(
+            client, "_execute_service", return_value=response
+        ) as execute_service_mock:
+            result = client.get_current_workforce(afm="")
+
+        self.assertEqual(result, [])
+        execute_service_mock.assert_called_once_with("EX_BASE_05", {"afm": ""})
+
+    def test_get_current_workforce_omits_none_filter_and_handles_empty_response(self):
+        client = ErganiClient("username", "password", "https://example.test")
+
+        with patch.object(
+            client, "_execute_service", return_value=None
+        ) as execute_service_mock:
+            result = client.get_current_workforce()
+
+        self.assertEqual(result, [])
+        execute_service_mock.assert_called_once_with("EX_BASE_05", {})

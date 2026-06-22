@@ -12,6 +12,8 @@ from ergani.models import (
     CompanyOvertime,
     CompanyWeeklySchedule,
     CompanyWorkCard,
+    CurrentWorkforceRecord,
+    CurrentWorkforceRequest,
     EmployerDetails,
     SubmissionResponse,
 )
@@ -332,3 +334,37 @@ class ErganiClient:
             raise ValueError("EX_BASE_01 returned a non-JSON response") from error
 
         return EmployerDetails.parse(payload)
+
+    def get_current_workforce(
+        self, afm: Optional[str] = None
+    ) -> List[CurrentWorkforceRecord]:
+        """
+        Fetches current workforce records from the Ergani API.
+
+        Args:
+            afm (Optional[str]): Optional employee tax identification number filter.
+                ``None`` omits the ``afm`` key from the request payload. An empty
+                string is serialized as ``{"afm": ""}``.
+
+        Returns:
+            List[CurrentWorkforceRecord]: Current workforce records, each wrapping
+            the raw response object returned by the API.
+
+        Raises:
+            APIError: An error occurred while communicating with the Ergani API
+            AuthenticationError: Raised if there is an authentication error with the Ergani API
+            ValueError: Raised if the response payload could not be parsed as JSON
+        """
+
+        parameters = CurrentWorkforceRequest(afm=afm).serialize()
+        response = self._execute_service("EX_BASE_05", parameters)
+
+        if not response:
+            return CurrentWorkforceRecord.parse_many(None)
+
+        try:
+            payload = response.json()
+        except ValueError as error:
+            raise ValueError("EX_BASE_05 returned a non-JSON response") from error
+
+        return CurrentWorkforceRecord.parse_many(payload)
