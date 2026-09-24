@@ -336,7 +336,15 @@ class CurrentWorkforceTests(TestCase):
         self.assertEqual(
             CurrentWorkforceRecord.parse_many({"EX_BASE_05": {"Cur": {}}}), []
         )
-        with self.assertRaisesRegex(ValueError, "list or record object"):
+        self.assertEqual(
+            CurrentWorkforceRecord.parse_many({"EX_BASE_05": {"Cur": {"Amka": "123"}}}),
+            [
+                CurrentWorkforceRecord(
+                    social_security_number="123", raw_payload={"Amka": "123"}
+                )
+            ],
+        )
+        with self.assertRaisesRegex(ValueError, "error object"):
             CurrentWorkforceRecord.parse_many({"EX_BASE_05": {"Error": "failure"}})
 
     def test_get_current_workforce_uses_afm_filter_and_parses_wrapped_response(self):

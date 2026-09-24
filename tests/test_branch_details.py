@@ -105,6 +105,14 @@ class BusinessBranchTests(TestCase):
             BusinessBranch.parse_many({"EX_BASE_02": {"Pararthma": {}}}), []
         )
 
+    def test_business_branch_parse_many_accepts_partial_record(self) -> None:
+        self.assertEqual(
+            BusinessBranch.parse_many(
+                {"EX_BASE_02": {"Pararthma": {"Kallikratis": "1"}}}
+            ),
+            [BusinessBranch.parse({"Kallikratis": "1"})],
+        )
+
     def test_business_branch_parse_many_accepts_single_branch_payload(self) -> None:
         self.assertEqual(
             BusinessBranch.parse_many(

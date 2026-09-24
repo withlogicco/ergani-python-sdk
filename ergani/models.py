@@ -211,7 +211,6 @@ class CurrentWorkforceRecord:
             payload,
             service_code="EX_BASE_05",
             collection_key="Cur",
-            record_keys={"afm", "Eponimo", "Onoma", "PararthmaAa"},
         )
 
 
@@ -219,7 +218,6 @@ def _parse_query_records(
     payload: Any,
     service_code: str,
     collection_key: str,
-    record_keys: set[str],
 ) -> List[Dict[str, Any]]:
     """Normalize query results whose collection can be a list, one object, or empty."""
     if payload is None:
@@ -236,10 +234,9 @@ def _parse_query_records(
         return []
 
     if isinstance(payload, dict):
-        if not record_keys.intersection(payload):
-            raise ValueError(
-                f"Expected {service_code} response payload to be a list or record object"
-            )
+        # A partial record may contain any of the service's fields, not just identifiers.
+        if {key.lower() for key in payload} & {"error", "errors"}:
+            raise ValueError(f"Expected {service_code} record, got an error object")
         return [payload]
 
     if not isinstance(payload, list):
@@ -308,7 +305,6 @@ class BusinessBranch:
             payload,
             service_code="EX_BASE_02",
             collection_key="Pararthma",
-            record_keys={"Aa", "Address", "YpiresiaSepe", "Kad"},
         )
         return [cls.parse(item) for item in branches]
 
