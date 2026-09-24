@@ -371,7 +371,7 @@ The glossary might help you if you're taking a look at the official documentatio
 
 | **Original API code**  | **Original help text** (in Greek)   | **Translated**     |
 |------------------------|-------------------------------------|--------------------|
-| `ΜΕ`                   | ΜΗ ΕΡΓΑΣΙΑ                          | `ABSENT`           |
+| `ΜΕ`                   | ΜΗ ΕΡΓΑΣΙΑ                          | `NO_WORK`          |
 | `ΑΝ`                   | ΑΝΑΠΑΥΣΗ/ΡΕΠΟ                       | `REST_DAY`         |
 | `ΤΗΛ`                  | ΤΗΛΕΡΓΑΣΙΑ                          | `WORK_FROM_HOME`   |
 | `ΕΡΓ`                  | ΕΡΓΑΣΙΑ                             | `WORK_FROM_OFFICE` |
