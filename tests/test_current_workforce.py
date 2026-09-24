@@ -323,9 +323,21 @@ class CurrentWorkforceTests(TestCase):
             ],
         )
 
-    def test_current_workforce_record_parse_many_requires_list_payload(self):
-        with self.assertRaisesRegex(ValueError, "payload to be a list"):
-            CurrentWorkforceRecord.parse_many({"EX_BASE_05": {"Cur": {}}})
+    def test_current_workforce_record_parse_many_accepts_single_employee(self):
+        employee = {"afm": "000000001", "PararthmaAa": "0"}
+        self.assertEqual(
+            CurrentWorkforceRecord.parse_many({"EX_BASE_05": {"Cur": employee}}),
+            [CurrentWorkforceRecord.parse(employee)],
+        )
+
+    def test_current_workforce_record_parse_many_handles_empty_and_invalid_results(
+        self,
+    ):
+        self.assertEqual(
+            CurrentWorkforceRecord.parse_many({"EX_BASE_05": {"Cur": {}}}), []
+        )
+        with self.assertRaisesRegex(ValueError, "list or record object"):
+            CurrentWorkforceRecord.parse_many({"EX_BASE_05": {"Error": "failure"}})
 
     def test_get_current_workforce_uses_afm_filter_and_parses_wrapped_response(self):
         client = ErganiClient("username", "password", "https://example.test")

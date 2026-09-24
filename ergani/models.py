@@ -207,19 +207,47 @@ class CurrentWorkforceRecord:
 
     @classmethod
     def _parse_payloads(cls, payload: Any) -> List[Dict[str, Any]]:
-        if payload is None:
-            return []
+        return _parse_query_records(
+            payload,
+            service_code="EX_BASE_05",
+            collection_key="Cur",
+            record_keys={"afm", "Eponimo", "Onoma", "PararthmaAa"},
+        )
 
-        if isinstance(payload, dict) and "EX_BASE_05" in payload:
-            payload = payload["EX_BASE_05"]
 
-        if isinstance(payload, dict) and "Cur" in payload:
-            payload = payload["Cur"]
+def _parse_query_records(
+    payload: Any,
+    service_code: str,
+    collection_key: str,
+    record_keys: set[str],
+) -> List[Dict[str, Any]]:
+    """Normalize query results whose collection can be a list, one object, or empty."""
+    if payload is None:
+        return []
 
-        if not isinstance(payload, list):
-            raise ValueError("Expected current workforce response payload to be a list")
+    if isinstance(payload, dict) and service_code in payload:
+        payload = payload[service_code]
 
-        return payload
+    if isinstance(payload, dict) and collection_key in payload:
+        payload = payload[collection_key]
+
+    # XML-to-JSON responses can represent an empty collection as null or {}.
+    if payload is None or payload == {}:
+        return []
+
+    if isinstance(payload, dict):
+        if not record_keys.intersection(payload):
+            raise ValueError(
+                f"Expected {service_code} response payload to be a list or record object"
+            )
+        return [payload]
+
+    if not isinstance(payload, list):
+        raise ValueError(
+            f"Expected {service_code} response payload to be a list or record object"
+        )
+
+    return payload
 
 
 def _parse_int(value: Any) -> int | None:
@@ -276,35 +304,13 @@ class BusinessBranch:
 
     @classmethod
     def parse_many(cls, payload: Any) -> List[BusinessBranch]:
-        if payload is None:
-            return []
-
-        branch_payload = cls._unwrap_payload(payload)
-
-        if isinstance(branch_payload, dict):
-            return [cls.parse(branch_payload)]
-
-        if not isinstance(branch_payload, list):
-            raise ValueError(
-                "Expected EX_BASE_02 branch payload to be an object or list"
-            )
-
-        return [cls.parse(item) for item in branch_payload]
-
-    @staticmethod
-    def _unwrap_payload(payload: Any) -> Any:
-        if not isinstance(payload, dict):
-            raise ValueError("Expected EX_BASE_02 payload to be an object")
-
-        if "EX_BASE_02" in payload:
-            payload = payload["EX_BASE_02"]
-
-        if not isinstance(payload, dict):
-            raise ValueError("Expected EX_BASE_02 payload to contain an object")
-
-        branch_payload = payload.get("Pararthma", payload)
-
-        return branch_payload
+        branches = _parse_query_records(
+            payload,
+            service_code="EX_BASE_02",
+            collection_key="Pararthma",
+            record_keys={"Aa", "Address", "YpiresiaSepe", "Kad"},
+        )
+        return [cls.parse(item) for item in branches]
 
 
 @dataclass

@@ -100,6 +100,11 @@ class BusinessBranchTests(TestCase):
         with self.assertRaises(ValueError):
             BusinessBranch.parse("invalid")
 
+    def test_business_branch_parse_many_handles_empty_collection(self) -> None:
+        self.assertEqual(
+            BusinessBranch.parse_many({"EX_BASE_02": {"Pararthma": {}}}), []
+        )
+
     def test_business_branch_parse_many_accepts_single_branch_payload(self) -> None:
         self.assertEqual(
             BusinessBranch.parse_many(
