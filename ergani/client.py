@@ -243,6 +243,39 @@ class ErganiClient:
 
         return self._extract_submission_result(response)
 
+    def submit_daily_schedule_retrospective(
+        self, company_daily_schedules: List[CompanyDailySchedule]
+    ) -> List[SubmissionResponse]:
+        """
+        Submits daily schedules to Ergani's retrospective endpoint (WTODailyA), for changes
+        declared after work has started. Same payload and response as `submit_daily_schedule`.
+
+        The employer must already have an exemption declaration (Δήλωση Εξαίρεσης από
+        Υποχρέωση Προαναγγελίας) on file, otherwise Ergani answers with HTTP 400.
+
+        Args:
+            company_daily_schedules List[CompanyDailySchedule]: A list of CompanyDailySchedule instances to be submitted
+
+        Returns:
+            List[SubmissionResponse]: A list of SubmissionResponse that were parsed from the API response
+
+        Raises:
+            APIError: An error occurred while communicating with the Ergani API
+            AuthenticationError: Raised if there is an authentication error with the Ergani API
+        """
+
+        endpoint = "/Documents/WTODailyA"
+
+        request_payload = {
+            "WTOS": {
+                "WTO": [schedule.serialize() for schedule in company_daily_schedules]
+            }
+        }
+
+        response = self._request("POST", endpoint, request_payload)
+
+        return self._extract_submission_result(response)
+
     def submit_weekly_schedule(
         self, company_weekly_schedules: List[CompanyWeeklySchedule]
     ) -> List[SubmissionResponse]:
