@@ -191,6 +191,20 @@ response = ergani_client.submit_daily_schedule(
 )
 ```
 
+#### Retrospective daily schedule
+
+If a schedule change is declared after work has already started, ERGANI rejects `submit_daily_schedule` with HTTP 400 (`Η υποβολή σας θεωρείται εκπρόθεσμη`). In that case use `submit_daily_schedule_retrospective`, which posts to the `WTODailyA` endpoint. It takes the same payload and returns the same response as `submit_daily_schedule`.
+
+```py
+def submit_daily_schedule_retrospective(company_daily_schedules: List[CompanyDailySchedule]) -> List[SubmissionResponse]
+```
+
+```py
+response = ergani_client.submit_daily_schedule_retrospective(
+    company_daily_schedules=company_daily_schedules
+)
+```
+
 ### Weekly schedule
 
 Submit weekly schedules to Ergani in order to declare schedules for employees that have a fixed schedule.
