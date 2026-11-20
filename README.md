@@ -48,7 +48,7 @@ We are going to use the aforementioned `ergani_client` for the following usage e
 Submit work card records to Ergani in order to declare an employee's movement (arrival, departure).
 
 ```py
-def submit_work_card(company_work_cards: List[CompanyWorkCard]) -> (Response | None)
+def submit_work_card(company_work_cards: List[CompanyWorkCard]) -> List[SubmissionResponse]
 ```
 
 #### Example
@@ -111,13 +111,13 @@ response = ergani_client.submit_work_card(company_work_cards=company_work_cards)
 Submit overtime records to Ergani in order to declare employees overtimes.
 
 ```py
-def submit_overtime(company_overtimes: List[CompanyOvertime]) -> (Response | None)
+def submit_overtime(company_overtimes: List[CompanyOvertime]) -> List[SubmissionResponse]
 ```
 
 #### Example
 
 ```py
-from datime import datetime
+from datetime import datetime, time
 from ergani.models import CompanyOvertime, Overtime
 
 today = datetime.today()
@@ -157,13 +157,13 @@ response = ergani_client.submit_overtime(company_overtimes=company_overtimes)
 Submit daily schedules to Ergani in order to declare schedules for employees that don't have a fixed schedule (e.g. shift workers).
 
 ```py
-def submit_daily_schedule(company_daily_schedules: List[CompanyDailySchedule]) -> (Response | None)
+def submit_daily_schedule(company_daily_schedules: List[CompanyDailySchedule]) -> List[SubmissionResponse]
 ```
 
 #### Example
 
 ```py
-from datime import datetime, timedelta
+from datetime import datetime, time, timedelta
 from ergani.models import CompanyDailySchedule, EmployeeDailySchedule, WorkdayDetails
 
 today = datetime.today()
@@ -191,18 +191,32 @@ response = ergani_client.submit_daily_schedule(
 )
 ```
 
+#### Retrospective daily schedule
+
+If a schedule change is declared after work has already started, ERGANI rejects `submit_daily_schedule` with HTTP 400 (`Η υποβολή σας θεωρείται εκπρόθεσμη`). In that case use `submit_daily_schedule_retrospective`, which posts to the `WTODailyA` endpoint. It takes the same payload and returns the same response as `submit_daily_schedule`.
+
+```py
+def submit_daily_schedule_retrospective(company_daily_schedules: List[CompanyDailySchedule]) -> List[SubmissionResponse]
+```
+
+```py
+response = ergani_client.submit_daily_schedule_retrospective(
+    company_daily_schedules=company_daily_schedules
+)
+```
+
 ### Weekly schedule
 
 Submit weekly schedules to Ergani in order to declare schedules for employees that have a fixed schedule.
 
 ```py
-def submit_weekly_schedule(company_weekly_schedules: List[CompanyWeeklySchedule]) -> (Response | None)
+def submit_weekly_schedule(company_weekly_schedules: List[CompanyWeeklySchedule]) -> List[SubmissionResponse]
 ```
 
 #### Example
 
 ```py
-from datime import datetime, timedelta
+from datetime import datetime, time, timedelta
 from ergani.models import CompanyDailySchedule, EmployeeDailySchedule, WorkdayDetails
 
 today = datetime.today()
